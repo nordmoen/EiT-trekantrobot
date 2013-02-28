@@ -41,8 +41,10 @@ html, body{
 	}
 	
 	#robot_canvas{
-		width:			inherit;
-		height:			inherit;
+		width:			200%;
+		height:			200%;
+		border:			dashed;
+		border-color:		#0000FF;
 	}
 
 	
