@@ -24,22 +24,46 @@
 
 	 	$(function() {
 	 		$("#robot_canvas").draggable({
-			containment:"#robot_containment", scroll:false,
+			scroll:false,
 			stop:checkPos});
 	 	});
 		
 		function checkPos( event, ui ) {
-			var containment = $( "#robot_area_containment" ).position();
-			var currPos = ui.position;
-			var effect = false;
-			console.log( containment );
-			console.log( currPos );
-			if ( currPos.top < containment.top ) {
-				effect = true;
-				$("#robot_canvas").offset( { top:containment.top, left:currPos.left} );
+			var containment = $( "#robot_area_containment" );
+			var canvas = $( "#robot_canvas" );
+			var vertEffect = false;
+			var horEffect = false;
+			if ( canvas.offset().top > containment.offset().top ) {
+				vertEffect = true;
+				canvas.offset( { 
+					top:containment.offset().top, left:canvas.offset().left} );
+			} else if ( (canvas.offset().top + canvas.height()) <
+					(containment.offset().top + containment.height()) ) {
+				vertEffect = true;
+				canvas.offset( {
+					top:(containment.offset().top - 
+					     (canvas.height() - containment.height())),
+					left:canvas.offset().left} );
 			}
-			if ( effect ) {
+			if ( canvas.offset().left > containment.offset().left ) {
+				horEffect = true;
+				canvas.offset( {
+					top:canvas.offset().top, left:containment.offset().left} );
+			} else if ( (canvas.offset().left + canvas.width()) < 
+					(containment.offset().left + containment.width())) {
+				horEffect = true;
+				canvas.offset( {
+					top:canvas.offset().top,
+					left:(containment.offset().left -
+						(canvas.width() - containment.width()))});
+			}
+
+			if ( vertEffect && horEffect) {
+				$("#robot_canvas").effect( "shake", {}, 500, function() {} );
+			} else if ( vertEffect ) {
 				$("#robot_canvas").effect( "bounce", {}, 500, function() {} );
+			} else if ( horEffect ) {
+				$("#robot_canvas").effect( "shake", {}, 500, function() {} );
 			}
 		};
 
