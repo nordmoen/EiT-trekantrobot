@@ -24,8 +24,25 @@
 
 	 	$(function() {
 	 		$("#robot_canvas").draggable({
-	 			containment:"#robot_containment", scroll:false});
+			containment:"#robot_containment", scroll:false,
+			stop:checkPos});
 	 	});
+		
+		function checkPos( event, ui ) {
+			var containment = $( "#robot_area_containment" ).position();
+			var currPos = ui.position;
+			var effect = false;
+			console.log( containment );
+			console.log( currPos );
+			if ( currPos.top < containment.top ) {
+				effect = true;
+				$("#robot_canvas").offset( { top:containment.top, left:currPos.left} );
+			}
+			if ( effect ) {
+				$("#robot_canvas").effect( "bounce", {}, 500, function() {} );
+			}
+		};
+
 	 }
 
 	 </script>
