@@ -9,6 +9,8 @@
  	<script src="scripts/imports/jquery-ui.js"> </script>
  	<script src="scripts/imports/jquery-ui-min.js"> </script>
 
+ 	<script src="scripts/menu-elements.js"> </script>
+
 
 	<script type="text/javascript">
 	window.onload = function(){
@@ -27,7 +29,7 @@
 			scroll:false,
 			stop:checkPos});
 	 	});
-		
+
 		function checkPos( event, ui ) {
 			var containment = $( "#robot_area_containment" );
 			var canvas = $( "#robot_canvas" );
@@ -35,13 +37,13 @@
 			var horEffect = false;
 			if ( canvas.offset().top > containment.offset().top ) {
 				vertEffect = true;
-				canvas.offset( { 
+				canvas.offset( {
 					top:containment.offset().top, left:canvas.offset().left} );
 			} else if ( (canvas.offset().top + canvas.height()) <
 					(containment.offset().top + containment.height()) ) {
 				vertEffect = true;
 				canvas.offset( {
-					top:(containment.offset().top - 
+					top:(containment.offset().top -
 					     (canvas.height() - containment.height())),
 					left:canvas.offset().left} );
 			}
@@ -49,7 +51,7 @@
 				horEffect = true;
 				canvas.offset( {
 					top:canvas.offset().top, left:containment.offset().left} );
-			} else if ( (canvas.offset().left + canvas.width()) < 
+			} else if ( (canvas.offset().left + canvas.width()) <
 					(containment.offset().left + containment.width()) ) {
 				horEffect = true;
 				canvas.offset( {
@@ -80,7 +82,112 @@
 </div>
 
 <div id="menu_container" class="menu_container">
-	Menu be here
+	Menu be here <hr />
+	<div id="r01" class="clickable">
+		robot 01 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r02" class="clickable">
+			robot 02 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r03" class="clickable">
+			robot 03 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r01" class="clickable">
+			robot 01 <br />
+			battery <br />
+			signal <br />
+		</div>
+	<div id="r02" class="clickable">
+			robot 02 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r03" class="clickable">
+			robot 03 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r01" class="clickable">
+		robot 01 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r02" class="clickable">
+			robot 02 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r03" class="clickable">
+			robot 03 <br />
+			battery <br />
+			signal <br />
+	</div>
+	<div id="r01" class="clickable">
+		robot 01 <br />
+		battery <br />
+		signal <br />
+	</div>
+		<div id="r02" class="clickable">
+				robot 02 <br />
+				battery <br />
+				signal <br />
+		</div>
+		<div id="r03" class="clickable">
+				robot 03 <br />
+				battery <br />
+				signal <br />
+	</div>
+	<div id="r01" class="clickable">
+			robot 01 <br />
+			battery <br />
+			signal <br />
+		</div>
+		<div id="r02" class="clickable">
+				robot 02 <br />
+				battery <br />
+				signal <br />
+		</div>
+		<div id="r03" class="clickable">
+				robot 03 <br />
+				battery <br />
+				signal <br />
+	</div>
+	<div id="r01" class="clickable">
+			robot 01 <br />
+			battery <br />
+			signal <br />
+		</div>
+		<div id="r02" class="clickable">
+				robot 02 <br />
+				battery <br />
+				signal <br />
+		</div>
+		<div id="r03" class="clickable">
+				robot 03 <br />
+				battery <br />
+				signal <br />
+	</div>
+	<div id="r01" class="clickable">
+			robot 01 <br />
+			battery <br />
+			signal <br />
+		</div>
+		<div id="r02" class="clickable">
+				robot 02 <br />
+				battery <br />
+				signal <br />
+		</div>
+		<div id="r03" class="clickable">
+				robot 03 <br />
+				battery <br />
+				signal <br />
+	</div>
 </div>
 
 <div id="robot_area_containment" class="robot_containment">
