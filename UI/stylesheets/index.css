@@ -19,7 +19,7 @@ html, body{
 		
 	}
 	
-	.menu_bar{
+	.menu_container{
 		float:			right;
 		position:		fixed;
 		top:			0px;
@@ -29,7 +29,7 @@ html, body{
 		border-color:		#000000;
 		height:			inherit;
 		width:			10%;
-		overflow:		hidden;
+		overflow:		auto;
 	}
 	
 	.robot_containment{
@@ -46,6 +46,4 @@ html, body{
 		border:			dashed;
 		border-color:		#0000FF;
 	}
-
-	
 }
