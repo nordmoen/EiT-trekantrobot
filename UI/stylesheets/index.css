@@ -46,4 +46,14 @@ html, body{
 		border:			dashed;
 		border-color:		#0000FF;
 	}
+	
+	.clickable{
+	    border-bottom-style:	solid;
+	    border-width:		1px;
+	    border-color:		#000000;
+	}
+	
+	.selected{
+	    font-weight:		bold;
+	}
 }
