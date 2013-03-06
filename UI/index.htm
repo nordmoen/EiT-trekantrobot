@@ -2,33 +2,33 @@
 
  <html lang="en">
  <head>
- 	<meta http-quiv="Content-type" content="text/html" charset="utf-8" />
- 	<title>TrekantRobot UI</title>
- 	<link rel="stylesheet" type="text/css" href="stylesheets/index.css" />
- 	<script src="scripts/imports/jquery.js"> </script>
- 	<script src="scripts/imports/jquery-ui.js"> </script>
- 	<script src="scripts/imports/jquery-ui-min.js"> </script>
+	<meta http-quiv="Content-type" content="text/html" charset="utf-8" />
+	<title>TrekantRobot UI</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/index.css" />
+	<script src="scripts/imports/jquery.js"> </script>
+	<script src="scripts/imports/jquery-ui.js"> </script>
+	<script src="scripts/imports/jquery-ui-min.js"> </script>
 
- 	<script src="scripts/menu-elements.js"> </script>
+	<script src="scripts/menu-elements.js"> </script>
 
 
 	<script type="text/javascript">
 	window.onload = function(){
-	 	var c=document.getElementById("robot_canvas");
-	 	var ctx=c.getContext("2d");
+		var c=document.getElementById("robot_canvas");
+		var ctx=c.getContext("2d");
 
-	 	var grd=ctx.createLinearGradient(0, 0, 200, 0);
-	 	grd.addColorStop(0, "red");
-	 	grd.addColorStop(1, "white");
+		var grd=ctx.createLinearGradient(0, 0, 200, 0);
+		grd.addColorStop(0, "red");
+		grd.addColorStop(1, "white");
 
-	 	ctx.fillStyle=grd;
-	 	ctx.fillRect(10, 10, 150, 80);
+		ctx.fillStyle=grd;
+		ctx.fillRect(10, 10, 150, 80);
 
-	 	$(function() {
-	 		$("#robot_canvas").draggable({
+		$(function() {
+			$("#robot_canvas").draggable({
 			scroll:false,
 			stop:checkPos});
-	 	});
+		});
 
 		function checkPos( event, ui ) {
 			var containment = $( "#robot_area_containment" );
@@ -44,7 +44,7 @@
 				vertEffect = true;
 				canvas.offset( {
 					top:(containment.offset().top -
-					     (canvas.height() - containment.height())),
+						 (canvas.height() - containment.height())),
 					left:canvas.offset().left} );
 			}
 			if ( canvas.offset().left > containment.offset().left ) {
@@ -83,111 +83,83 @@
 
 <div id="menu_container" class="menu_container">
 	Menu be here <hr />
+<!-- ADDED DUMMY ROBOTS -->
 	<div id="r01" class="clickable">
 		robot 01 <br />
 		battery <br />
 		signal <br />
 	</div>
 	<div id="r02" class="clickable">
-			robot 02 <br />
-			battery <br />
-			signal <br />
-	</div>
-	<div id="r03" class="clickable">
-			robot 03 <br />
-			battery <br />
-			signal <br />
-	</div>
-	<div id="r01" class="clickable">
-			robot 01 <br />
-			battery <br />
-			signal <br />
-		</div>
-	<div id="r02" class="clickable">
-			robot 02 <br />
-			battery <br />
-			signal <br />
-	</div>
-	<div id="r03" class="clickable">
-			robot 03 <br />
-			battery <br />
-			signal <br />
-	</div>
-	<div id="r01" class="clickable">
-		robot 01 <br />
+		robot 02 <br />
 		battery <br />
 		signal <br />
 	</div>
-	<div id="r02" class="clickable">
-			robot 02 <br />
-			battery <br />
-			signal <br />
-	</div>
 	<div id="r03" class="clickable">
-			robot 03 <br />
-			battery <br />
-			signal <br />
-	</div>
-	<div id="r01" class="clickable">
-		robot 01 <br />
+		robot 03 <br />
 		battery <br />
 		signal <br />
 	</div>
-		<div id="r02" class="clickable">
-				robot 02 <br />
-				battery <br />
-				signal <br />
-		</div>
-		<div id="r03" class="clickable">
-				robot 03 <br />
-				battery <br />
-				signal <br />
+	<div id="r04" class="clickable">
+		robot 04 <br />
+		battery <br />
+		signal <br />
 	</div>
-	<div id="r01" class="clickable">
-			robot 01 <br />
-			battery <br />
-			signal <br />
-		</div>
-		<div id="r02" class="clickable">
-				robot 02 <br />
-				battery <br />
-				signal <br />
-		</div>
-		<div id="r03" class="clickable">
-				robot 03 <br />
-				battery <br />
-				signal <br />
+	<div id="r05" class="clickable">
+		robot 05 <br />
+		battery <br />
+		signal <br />
 	</div>
-	<div id="r01" class="clickable">
-			robot 01 <br />
-			battery <br />
-			signal <br />
-		</div>
-		<div id="r02" class="clickable">
-				robot 02 <br />
-				battery <br />
-				signal <br />
-		</div>
-		<div id="r03" class="clickable">
-				robot 03 <br />
-				battery <br />
-				signal <br />
+	<div id="r06" class="clickable">
+		robot 06 <br />
+		battery <br />
+		signal <br />
 	</div>
-	<div id="r01" class="clickable">
-			robot 01 <br />
-			battery <br />
-			signal <br />
-		</div>
-		<div id="r02" class="clickable">
-				robot 02 <br />
-				battery <br />
-				signal <br />
-		</div>
-		<div id="r03" class="clickable">
-				robot 03 <br />
-				battery <br />
-				signal <br />
+	<div id="r07" class="clickable">
+		robot 07 <br />
+		battery <br />
+		signal <br />
 	</div>
+	<div id="r08" class="clickable">
+		robot 08 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r09" class="clickable">
+		robot 09 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r10" class="clickable">
+		robot 10 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r11" class="clickable">
+		robot 11 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r12" class="clickable">
+		robot 12 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r13" class="clickable">
+		robot 13 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r14" class="clickable">
+		robot 14 <br />
+		battery <br />
+		signal <br />
+	</div>
+	<div id="r15" class="clickable">
+		robot 15 <br />
+		battery <br />
+		signal <br />
+	</div>
+<!-- END OF DUMMy ROBOTS! -->
 </div>
 
 <div id="robot_area_containment" class="robot_containment">
