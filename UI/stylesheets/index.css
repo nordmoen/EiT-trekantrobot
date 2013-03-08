@@ -4,7 +4,7 @@ html, body{
 	display:	block;
 }
 
-@media screen and (orientation:landscape) and (min-device-width:1300px) and (min-device-height:720px) {
+@media screen and (orientation:landscape) and (min-device-width:1200px) and (min-device-height:720px) {
 	.banner{
 		background: 		#FFA71A;
 		float:			left;
