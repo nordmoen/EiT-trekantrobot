@@ -18,6 +18,7 @@ function addMenu(elm){
     menuDiv.id = "menuDiv";
     menuDiv.innerHTML = createMenuDiv(this);
     elm.appendChild(menuDiv);
+    $("#menuDiv").effect( "slide", {direction:"right"}, 250, function () {} );
 }
 
 
