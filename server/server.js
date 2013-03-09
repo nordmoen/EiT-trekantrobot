@@ -8,7 +8,6 @@ var io = require('socket.io');
 var client = null;
 var port = 8125;
 var hostAddr = '127.0.0.1';
-var ioServer = io.listen(port + 1);
 
 if(process.argv.length > 2){
 	hostAddr = process.argv[2];
@@ -16,6 +15,8 @@ if(process.argv.length > 2){
 		port = process.argv[3];
 	}
 }
+
+var ioServer = io.listen(port + 1);
 
 ioServer.on('connection', function (sock) {
 	console.log('Getting a connection on websocket');
