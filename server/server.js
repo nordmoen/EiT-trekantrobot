@@ -27,7 +27,8 @@ ioServer.on('connection', function (sock) {
 		//TODO: Add the necessary message functions here
 	}else{
 		console.log('There is already a client connected, refusing connection');
-		sock.disconnect();
+		sock.emit('connect_failed', 'Busy');
+		sock.disconnect(true);
 	}
 });
 
@@ -43,28 +44,20 @@ var server = http.createServer(function (request, response) {
 		filepath = '../UI/index.htm';
 	var contentType = 'text/html';
 	console.log('User is requesting url: ' + filepath);
-	if(client === null){
-		console.log('We can accomodate the user, no other connections');
-		var requestFiletype = path.extname(filepath);
-		switch (requestFiletype){
-			case '.js':
-				contentType = 'text/javascript';
-				break;
-			case '.css':
-				contentType = 'text/css';
-				break;
-			case '.png':
-				contentType = 'image/png';
-				break;
-			case '.appcache':
-				contentType = 'text/cache-manifest';
-				break;
-		}
-	}else{
-		console.log('We can\'t accomodate a user is already connected');
-		console.log('Serving our appology site');
-		contentType = 'text/html';
-		filepath = '../UI/sorry.htm';
+	var requestFiletype = path.extname(filepath);
+	switch (requestFiletype){
+		case '.js':
+			contentType = 'text/javascript';
+			break;
+		case '.css':
+			contentType = 'text/css';
+			break;
+		case '.png':
+			contentType = 'image/png';
+			break;
+		case '.appcache':
+			contentType = 'text/cache-manifest';
+			break;
 	}
 	fs.readFile(filepath, function(error, content) {
 		if (error) {

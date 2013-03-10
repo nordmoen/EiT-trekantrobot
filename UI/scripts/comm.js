@@ -12,7 +12,7 @@ $(document).ready(function(){
 		//TODO: Make an overlay or something to tell the user to reload
 	});
 	socket.on('disconnected', function () {
-		setBannerText("Disconected from server", -1);
+		setBannerText("Disconected from server", 0);
 		gloabalSocket = null;
 		//TODO: Make an overlay or something to tell the user to reload
 	});

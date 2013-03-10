@@ -1,3 +1,5 @@
 %Vim specific:
 *.swp
 *.swo
+
+server/node_modules
