@@ -53,10 +53,15 @@ var server = http.createServer(function (request, response) {
 			case '.css':
 				contentType = 'text/css';
 				break;
+			case '.png':
+				contentType = 'image/png';
+				break;
+			case '.appcache':
+				contentType = 'text/cache-manifest';
+				break;
 		}
 	}else{
-		console.log('We can\' accomodate the user, client: ' + client + 
-			' is already connected');
+		console.log('We can\'t accomodate a user is already connected');
 		console.log('Serving our appology site');
 		contentType = 'text/html';
 		filepath = '../UI/sorry.htm';
