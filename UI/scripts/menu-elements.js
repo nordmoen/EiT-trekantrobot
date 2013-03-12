@@ -9,15 +9,23 @@ $(document).ready(function(){
 	
 });
 
+function robotClick(event){
+	if(this.classList.contains("selected") && this.classList.contains("robot")){
+		removeMenu(this);
+	} else {
+		addMenu(this);
+	}
+}
+
 function innerClick(event){
-		if(this.id==="close"){
-			removeMenu(this);
-		}else if(this.classList.contains("closeMenu")){
-			removeMenu(this);
-		}else if(!this.classList.contains("selected")){
-			addMenu(this)
-		}
-		event.stopPropagation();
+	if(this.id==="close"){
+		removeMenu(this);
+	}else if(this.classList.contains("closeMenu")){
+		removeMenu(this);
+	}else if(!this.classList.contains("selected")){
+		addMenu(this)
+	}
+	event.stopPropagation();
 }
 
 function addMenu(elm){
@@ -54,7 +62,7 @@ function removeMenu(elm){
 			par2.classList.remove("selected");
 		}
 	}
-	clearBanner(); //Clear banner since nothing is selected anymore
+	resetBanner(); //Clear banner since nothing is selected anymore
 }
 
 // Dummy-function, needs to add proper elements that expand and work.
@@ -76,9 +84,11 @@ function createMenuDiv(parent){
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	var rDiv = document.createElement("div");
 	rDiv.classList.add("robot");
+	rDiv.classList.add("clickable");
 	rDiv.id = "r" + number;
 	rDiv.title = "Robot " + number;
 	rDiv.innerHTML=rDiv.title;
+	rDiv.onclick=robotClick
 	
 	var batt = document.createElement("img");
 	batt.src=createBatteryLoc(batteryStatus);
@@ -105,7 +115,7 @@ function createWorkingElement (working) {
 
 function createBatteryLoc (batteryStatus) {
 	var imgSrc = "";
-	if(batteryStatus >= 0){
+	if(batteryStatus >= 0 && batteryStatus < 5){
 		imgSrc = "icons/battery-empty.png";
 	}else if (batteryStatus < 20) {
 		imgSrc = "icons/battery-caution.png";
@@ -123,7 +133,7 @@ function createBatteryLoc (batteryStatus) {
 
 function createWirelessLoc (wirelessSignal) {
 	var imgSrc = "";
-	if(wirelessSignal >= 0){
+	if(wirelessSignal >= 0 && wirelessSignal < 5){
 		imgSrc = "icons/network-wireless-0.png";
 	}else if (wirelessSignal < 25){
 		imgSrc = "icons/network-wireless-25.png";

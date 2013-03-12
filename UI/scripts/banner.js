@@ -14,6 +14,10 @@ function clearBanner (timeout) {
 	}, timeout);
 }
 
+function resetBanner(){
+	setBannerText(defaultText, 250);
+}
+
 function setBannerText(text, timeout) {
 	//Timeout in ms
 	$("#banner").text(text);
