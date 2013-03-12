@@ -13,17 +13,17 @@ $(document).ready(function(){
 	});
 	socket.on('disconnected', function () {
 		setBannerText("Disconected from server", 0);
-		gloabalSocket = null;
+		globalSocket = null;
 		//TODO: Make an overlay or something to tell the user to reload
 	});
 	socket.on('reconnecting', function () {
 		setBannerText("Trying to reconnect to server", -1);
-		gloabalSocket = null;
+		globalSocket = null;
 		//TODO: Make an overlay or something to tell the user to reload
 	});
 	socket.on('reconnect', function () {
 		setBannerText("Connected successfully to server", 1000);
-		gloabalSocket = socket;
+		globalSocket = socket;
 	});
 	socket.on('error', function () {
 		setBannerText("The server connection had an accident", -1);
