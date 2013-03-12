@@ -24,7 +24,9 @@ ioServer.on('connection', function (sock) {
 		console.log('A new client is connected to this websocket');
 		client = sock;
 		client.on('disconnect', onClientDisconnect);
-		//TODO: Add the necessary message functions here
+		client.on('requestMove', onClientRequestMove);
+		client.on('askDebug', onClientAskDebug);
+		client.on('askInfo', onClientAskInfo);
 	}else{
 		console.log('There is already a client connected, refusing connection');
 		sock.emit('connect_failed', 'Busy');
@@ -35,6 +37,20 @@ ioServer.on('connection', function (sock) {
 function onClientDisconnect () {
 	console.log('Client disconnected from server websocket');
 	client = null;
+}
+function onClientRequestMove(data) {
+	console.log('Client sent a request for movement');
+	//TODO: Add communication with XBee
+}
+
+function onClientAskDebug(data){
+	console.log('Client sent a request for debug');
+	//TODO: Add communication with XBee
+}
+
+function onClientAskInfo(data){
+	console.log('Client sent a request for information');
+	//TODO: Add communication with XBee
 }
 
 var server = http.createServer(function (request, response) {
