@@ -112,7 +112,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 
 function createWorkingElement (working) {
 	if (working) {
-		return "<img src=\"icons/working.png\" alt=\"Working\">";
+		return "icons/working.png";
 	}else{
 		return "";
 	}

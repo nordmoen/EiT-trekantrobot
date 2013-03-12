@@ -1,6 +1,6 @@
 function drawRobot(id, x, y, direction) {
 	var r = globalLayer.get("#" + id);
-	if (r.length === 0){
+	if (r.length <= 0){
 		var rWedge = new Kinetic.Wedge({
 			x: x,
 			y: y,

@@ -5,6 +5,7 @@ var globalSocket = null;
 //be false
 var connecting = false;
 var retries = 3;
+var infoRequests = [];
 
 $(document).ready(function(){
 	//Connect to the server using socket.io once the page is loaded
@@ -76,18 +77,72 @@ $(document).ready(function(){
 });
 
 function notification(data){
+	//For the moment just move the robot since a notification message
+	//does not contain more info
+	move(data.id, data.pos.x, data.pos.y, data.direction);
 }
 
 function debug(data){
+	//Just report to the console the debug elements
+	console.log('Debug info from: ' + data.id);
+	for(var item in data.info){
+		console.log(item);
+	}
 }
 
 function info(data){
+	var pos = -1;
+	for(var i = infoRequests.length; i >= 0; i++){
+		if ( data.id === infoRequests[i].to ) {
+			pos = i;
+			break;
+		}
+	}
+	if(pos >= 0){
+		var request = infoRequests[pos].data.wanted;
+		infoRequests.remove(pos);
+		for(var i = 0; i < request.length; i++){
+			handleInfo(request[i], data.info[i], data.id);
+		}
+	}else{
+		//Could not find the corresponding askInfo message
+		console.log("Got a strange info message which was not asked for");
+		console.log('From: ' + data.id);
+		console.log(data);
+	}
+}
+
+//TODO: Finish this methods to update the correct places
+function handleInfo(infoElement, value, robot){
+	//To extend when new info is available extend the switch below
+	//and add the new functionality
+	switch(infoElement){
+		case 'battery_status':
+			updateRobotBattery(robot, value);
+			break;
+		case 'pos':
+			break;
+		case 'surroundings':
+			break;
+		case 'wireless_signal':
+			updateRobotWireless(robot, value);
+			break;
+		case 'working':
+			break;
+	}
 }
 
 function exception(data){
+	console.log('Robot: ' + data.id + ', threw an exception');
+	console.log('Exception name: ' + data.exception_type.exception_name);
+	console.log('Description: ' + data.exception_type.exception_desc);
+	console.log('Call stack:\n' + data.exception_type.debug_info);
 }
 
 function moveRequestAccepted(data){
+	//Since it accepted our order we set it to be working
+	//this can be overridden by the askInfo call
+	updateRobotWorking(data.id, true);
 }
 
 //Functions regarding communication with backend
@@ -116,6 +171,7 @@ function __trySend(data, callback, times, emitText){
 		if (globalSocket !== null){
 			//The socket is ready and we can transmit data
 			globalSocket.emit(emitText, data);
+			infoRequests.append(data);
 			callback(true);
 		}else{
 			//The socket is null and we need to either try again or
