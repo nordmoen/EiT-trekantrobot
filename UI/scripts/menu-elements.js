@@ -87,12 +87,12 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	rDiv.appendChild(batt);
 	
 	var wifi = document.createElement("img");
-	wifi.src=CreateWirelessLoc(wirelessSignal);
+	wifi.src=createWirelessLoc(wirelessSignal);
 	wifi.alt="Wireless signal " + wirelessSignal+"%";
 	wifi.id="r"+number+"wifi";
 	rDiv.appendChild(wifi);
 	
-	$("#menu_container").appendChild(rDiv);
+	document.getElementById("menu_container").appendChild(rDiv);
 }
 
 function createWorkingElement (working) {
@@ -134,8 +134,7 @@ function createWirelessLoc (wirelessSignal) {
 	}else{
 		imgSrc = "icons/network-wireless-100.png";
 	}
-	return "<img src=\"" + imgSrc + "\" alt=\"Wireless signal " + wirelessSignal +
-		"\">";
+	return imgSrc;
 }
 
 function mainMenu(elm){
