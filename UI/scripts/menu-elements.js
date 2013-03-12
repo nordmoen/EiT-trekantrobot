@@ -1,17 +1,7 @@
 $(document).ready(function(){
-	$(".innerClick").click(function(e){
-			alert(this.id);
-			if(this.id=="close"){
-				removeMenu(this.parentNode.parentNode);
-			}else{
-				addMenu(this)
-			}
-			e.stopPropagation();
-	});
 	$(".clickable").click(function(){
-		alert(this.id);
 		if(this.classList.contains("selected") && this.classList.contains("robot")){
-			//removeMenu(this);
+			removeMenu(this);
 		} else {
 			addMenu(this);
 		}
@@ -19,10 +9,21 @@ $(document).ready(function(){
 	
 });
 
+function innerClick(event){
+		if(this.id==="close"){
+			removeMenu(this);
+		}else if(this.classList.contains("closeMenu")){
+			removeMenu(this);
+		}else{
+			addMenu(this)
+		}
+		event.stopPropagation();
+}
+
 function addMenu(elm){
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
-    		//removeMenu(element);
+    		removeMenu(element);
     	});    
     }
     elm.classList.add("selected");
@@ -31,12 +32,10 @@ function addMenu(elm){
     menuDiv.id = "menuDiv";
     menuDiv.classList.add("innerClick");
     menuDiv.innerHTML = "<hr />";
-    var children = createMenuDiv(elm);
     elm.appendChild(menuDiv);
-    menuDiv.style.zIndex=menuDiv.parentNode.style.zIndex + 1;
+    var children = createMenuDiv(elm);
     for( var i=0; i < children.length; i++){
         menuDiv.appendChild(children[i]);
-        menuDiv.lastChild.style.zIndex=menuDiv.style.zIndex + 1;
     }
     
     $("#menuDiv").effect( "slide", {direction:"right"}, 250, function () {} );
@@ -44,10 +43,18 @@ function addMenu(elm){
 
 
 function removeMenu(elm){
-    var rem = document.getElementById("menuDiv");
-    elm.removeChild(rem);
-    elm.classList.remove("selected");
-    clearBanner(); //Clear banner since nothing is selected anymore
+	if(elm.classList.contains("robot")){
+		elm.removeChild(elm.lastChild);
+		elm.classList.remove("selected");
+	} else{
+		var par1 = elm.parentNode;
+		var par2;
+		if(par2 = par1.parentNode){
+			par2.removeChild(par1);
+			par2.classList.remove("selected");
+		}
+	}
+	clearBanner(); //Clear banner since nothing is selected anymore
 }
 
 // Dummy-function, needs to add proper elements that expand and work.
@@ -55,8 +62,11 @@ function createMenuDiv(parent){
 	if (parent.classList.contains("robot")){
 		return mainMenu(parent);
 	}
-	if (parent.id="drawPath"){
+	if (parent.id==="drawPath"){
 		return drawMenu(parent);
+	}
+	if (parent.id==="formation"){
+		return formMenu(parent);
 	}
 }
 
@@ -116,15 +126,19 @@ function mainMenu(elm){
 	var drawPath = document.createElement("div");
 	drawPath.id="drawPath";
 	drawPath.classList.add("innerClick");
+	drawPath.title="Drawing path";
+	drawPath.onclick=innerClick;
 	drawPath.innerHTML = "Draw path";
 	//Formation submenu
 	var formation = document.createElement("div");
 	formation.id="formation";
 	formation.classList.add("innerClick");
+	formation.onclick=innerClick;
 	formation.innerHTML = "Formation";
 	//Dance submenu
 	var dance = document.createElement("div");
 	dance.id="dance";
+	dance.onclick=innerClick;
 	dance.classList.add("innerClick");
 	dance.innerHTML="Dance";
 	/**
@@ -132,43 +146,81 @@ function mainMenu(elm){
 	var games = document.createElement("div");
 	games.id="games";
 	games.classList.add("innerClick");
+	games.onclick=innerClick;
 	games.innerHTML="Games";
 	//Customize submenu
 	var cust = document.createElement("div");
 	cust.id="customize";
 	cust.classList.add("innerClick");
+	cust.onclick=innerClick;
 	cust.innerHTML="Customize";
 	//Map Area submenu
 	var map = document.createElement("div");
 	map.id="mapArea";
 	map.classList.add("innerClick");
+	map.onclick=innerClick;
 	map.innerHTML="Map area";
 	**/
 	//Cancel submenu
 	var canc = document.createElement("div");
 	canc.id="cancel";
 	canc.classList.add("innerClick");
+	canc.onclick=innerClick;
 	canc.innerHTML="Cancel action";
 	//Close submenu
 	var clos = document.createElement("div");
 	clos.id="close";
 	clos.classList.add("innerClick");
+	clos.onclick=innerClick;
 	clos.innerHTML = "Close";
 	
 	return [drawPath, formation, dance, /**games, cust, map,**/ canc, clos];
 }
 
 function drawMenu(parent){
-	window.alert("yo");
+	//Send path button
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
+	drawSend.onclick=innerClick;
 	drawSend.innerHTML="Send path";
-	
+	//Close submenu button
 	var drawCanc = document.createElement("div");
 	drawCanc.id="drawCancel";
 	drawCanc.classList.add("innerClick");
+	drawCanc.classList.add("closeMenu");
+	drawCanc.onclick=innerClick;
 	drawCanc.innerHTML="Cancel";
 	
 	return [drawSend, drawCanc];
+}
+
+function formMenu(parent){
+	//Figure-of-8 button
+	var formFig8 = document.createElement("div");
+	formFig8.id="formFig8";
+	formFig8.classList.add("innerClick");
+	formFig8.onclick=innerClick;
+	formFig8.innerHTML="Figure of 8";
+	//Square button
+	var formSqua = document.createElement("div");
+	formSqua.id="formSqua";
+	formSqua.classList.add("innerClick");
+	formSqua.onclick=innerClick;
+	formSqua.innerHTML="Square";
+	//Star button
+	var formStar = document.createElement("div");
+	formStar.id="formStar";
+	formStar.classList.add("innerClick");
+	formStar.onclick=innerClick;
+	formStar.innerHTML="Star";
+	//Close submenu button
+	var formCanc = document.createElement("div");
+	formCanc.id="formCancel";
+	formCanc.classList.add("innerClick");
+	formCanc.classList.add("closeMenu");
+	formCanc.onclick=innerClick;
+	formCanc.innerHTML="Cancel";
+	
+	return [formFig8, formSqua, formStar, formCanc];
 }
