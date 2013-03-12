@@ -58,6 +58,19 @@ html, body{
 	}
 	
 	.selected{
-	    font-weight:		bold;
+	}
+	
+	.workIcon{
+		margin:			2px;
+		margin-left:		10px;
+	
+	.battIcon{
+		margin:			2px;
+		margin-left:		5px;
+	}
+	
+	.wifiIcon{
+		margin:			2px;
+		margin-left:		10px;
 	}
 }

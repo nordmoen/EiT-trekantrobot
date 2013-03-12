@@ -1,17 +1,7 @@
-$(document).ready(function(){
-	$(".clickable").click(function(){
-		if(this.classList.contains("selected") && this.classList.contains("robot")){
-			removeMenu(this);
-		} else {
-			addMenu(this);
-		}
-	});
-	
-});
 
 function robotClick(event){
 	if(this.classList.contains("selected") && this.classList.contains("robot")){
-		removeMenu(this);
+		removeMenu(this, true);
 	} else {
 		addMenu(this);
 	}
@@ -19,9 +9,9 @@ function robotClick(event){
 
 function innerClick(event){
 	if(this.id==="close"){
-		removeMenu(this);
+		removeMenu(this, true);
 	}else if(this.classList.contains("closeMenu")){
-		removeMenu(this);
+		removeMenu(this, false);
 	}else if(!this.classList.contains("selected")){
 		addMenu(this)
 	}
@@ -31,7 +21,7 @@ function innerClick(event){
 function addMenu(elm){
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
-    		removeMenu(element);
+    		removeMenu(element, false);
     	});    
     }
     elm.classList.add("selected");
@@ -50,23 +40,21 @@ function addMenu(elm){
 }
 
 
-function removeMenu(elm){
+function removeMenu(elm, reset){
 	if(elm.classList.contains("robot")){
 		elm.removeChild(elm.lastChild);
 		elm.classList.remove("selected");
-		resetBanner();
 	} else{
 		var par1 = elm.parentNode;
 		var par2;
 		if(par2 = par1.parentNode){
 			par2.removeChild(par1);
 			par2.classList.remove("selected");
-			if(par2.title){
-				resetBanner();
-			}else{
-				setBannerText(par2.parentNode.parentNode.title, -1);
-			}
+			setBannerText(par2.parentNode.parentNode.title, -1);
 		}
+	}
+	if(reset){
+		resetBanner();
 	}
 }
 
@@ -92,25 +80,66 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	rDiv.classList.add("clickable");
 	rDiv.id = "r" + number;
 	rDiv.title = "Robot " + number;
-	rDiv.innerHTML=rDiv.title;
+	rDiv.innerHTML=rDiv.title + "<br />";
 	rDiv.onclick=robotClick
 	
 	var batt = document.createElement("img");
 	batt.src=createBatteryLoc(batteryStatus);
-	batt.alt="Battery status " + batteryStatus;
+	batt.alt="Battery status " + batteryStatus+"%";
+	batt.title=batt.alt;
+	batt.classList.add("battIcon");
 	batt.id="r"+number+"batt";
 	rDiv.appendChild(batt);
 	
 	var wifi = document.createElement("img");
 	wifi.src=createWirelessLoc(wirelessSignal);
 	wifi.alt="Wireless signal " + wirelessSignal+"%";
+	wifi.title=wifi.alt;
+	wifi.classList.add("wifiIcon");
 	wifi.id="r"+number+"wifi";
 	rDiv.appendChild(wifi);
+	
+	var work = document.createElement("img");
+	work.src = createWorkingLoc(working);
+	work.alt = ((working) ? "Working" : "");
+	work.height=24;
+	work.title = work.alt;
+	work.classList.add("workIcon");
+	work.id="r"+number+"work";
+	rDiv.appendChild(work);
 	
 	document.getElementById("menu_container").appendChild(rDiv);
 }
 
-function createWorkingElement (working) {
+function updateRobotBattery(robot, batteryStatus){
+	var batt = document.getElementById("r"+robot+"batt");
+	batt.src=createBatteryLoc(batteryStatus);
+	batt.alt="Battery status " + batteryStatus+"%";
+	setBannerText("Robot "+ robot+" is now at "+batt.alt, 1500);
+	batt.title=batt.alt;
+	return true;
+}
+
+function updateRobotWireless(robot, wirelessSignal){
+	var wifi = document.getElementById("r"+robot+"wifi");
+	wifi.src=createWirelessLoc(wirelessSignal);
+	wifi.alt="Wireless signal " + wirelessSignal+"%";
+	setBannerText("Robot "+ robot+" is now at "+wifi.alt, 1500);
+	wifi.title=wifi.alt;
+	return true;
+}
+
+function updateRobotWorking(robot, working){
+	var work = document.getElementById("r"+robot+"work");
+	work.src = createWorkingLoc(working);
+	work.alt = ((working) ? "Working" : "Not working");
+	setBannerText("Robot "+ robot +" is now "+ work.alt, 1500);
+	work.title = work.alt;
+	return true;
+}
+
+
+function createWorkingLoc (working) {
 	if (working) {
 		return "icons/working.png";
 	}else{
@@ -164,12 +193,14 @@ function mainMenu(elm){
 	var formation = document.createElement("div");
 	formation.id="formation";
 	formation.classList.add("innerClick");
+	formation.title="Select a formation";
 	formation.onclick=innerClick;
 	formation.innerHTML = "Formation";
 	//Dance submenu
 	var dance = document.createElement("div");
 	dance.id="dance";
 	dance.onclick=innerClick;
+	dance.title="Who should dance?";
 	dance.classList.add("innerClick");
 	dance.innerHTML="Dance";
 	/**
