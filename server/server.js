@@ -9,6 +9,21 @@ var client = null;
 var port = 8125;
 var hostAddr = '127.0.0.1';
 
+//These are the robots which should be discovered through XBee
+//they should be objects({}) containing a name, the wireless
+//strength, batteryStatus and their working status, i.e. are
+//they doing some work or just fiddling about.
+//Format robot === {name: robotNumber, wireless:wirelessStatus,
+//battery:batteryStatus, working:doingWork}
+var robots = [];
+
+//Testing robots:
+robots.push({name:'1', wireless:40, battery:70, working:false});
+robots.push({name:'2', wireless:50, battery:100, working:false});
+robots.push({name:'3', wireless:100, battery:10, working:true});
+robots.push({name:'4', wireless:13, battery:0, working:false});
+robots.push({name:'5', wireless:0, battery:50, working:true});
+
 if(process.argv.length > 2){
 	hostAddr = process.argv[2];
 	if (process.argv.length > 3){
@@ -27,6 +42,10 @@ ioServer.on('connection', function (sock) {
 		client.on('requestMove', onClientRequestMove);
 		client.on('askDebug', onClientAskDebug);
 		client.on('askInfo', onClientAskInfo);
+		robots.forEach(function (item) {
+			client.emit('robotConnected', item.name, item.wireless,
+				item.battery, item.working);
+		});
 	}else{
 		console.log('There is already a client connected, refusing connection');
 		sock.emit('connect_failed', 'Busy');
