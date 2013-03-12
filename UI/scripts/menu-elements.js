@@ -54,15 +54,20 @@ function removeMenu(elm){
 	if(elm.classList.contains("robot")){
 		elm.removeChild(elm.lastChild);
 		elm.classList.remove("selected");
+		resetBanner();
 	} else{
 		var par1 = elm.parentNode;
 		var par2;
 		if(par2 = par1.parentNode){
 			par2.removeChild(par1);
 			par2.classList.remove("selected");
+			if(par2.title){
+				resetBanner();
+			}else{
+				setBannerText(par2.parentNode.parentNode.title, -1);
+			}
 		}
 	}
-	resetBanner(); //Clear banner since nothing is selected anymore
 }
 
 // Dummy-function, needs to add proper elements that expand and work.

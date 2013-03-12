@@ -41,10 +41,8 @@ html, body{
 	}
 	
 	#robot_canvas{
-		width:			200%;
-		height:			200%;
-		border:			dashed;
-		border-color:		#0000FF;
+		width:			100%;
+		height:			100%;
 	}
 	
 	.clickable{
