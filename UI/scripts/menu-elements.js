@@ -14,7 +14,7 @@ function innerClick(event){
 			removeMenu(this);
 		}else if(this.classList.contains("closeMenu")){
 			removeMenu(this);
-		}else{
+		}else if(!this.classList.contains("selected")){
 			addMenu(this)
 		}
 		event.stopPropagation();
@@ -68,13 +68,31 @@ function createMenuDiv(parent){
 	if (parent.id==="formation"){
 		return formMenu(parent);
 	}
+	if (parent.id==="dance"){
+		return danceMenu(parent)
+	}
 }
 
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	var rDiv = document.createElement("div");
 	rDiv.classList.add("robot");
-	rDiv.id = "robot" + number;
+	rDiv.id = "r" + number;
 	rDiv.title = "Robot " + number;
+	rDiv.innerHTML=rDiv.title;
+	
+	var batt = document.createElement("img");
+	batt.src=createBatteryLoc(batteryStatus);
+	batt.alt="Battery status " + batteryStatus;
+	batt.id="r"+number+"batt";
+	rDiv.appendChild(batt);
+	
+	var wifi = document.createElement("img");
+	wifi.src=CreateWirelessLoc(wirelessSignal);
+	wifi.alt="Wireless signal " + wirelessSignal+"%";
+	wifi.id="r"+number+"wifi";
+	rDiv.appendChild(wifi);
+	
+	$("#menu_container").appendChild(rDiv);
 }
 
 function createWorkingElement (working) {
@@ -85,7 +103,7 @@ function createWorkingElement (working) {
 	}
 }
 
-function createBatteryElement (batteryStatus) {
+function createBatteryLoc (batteryStatus) {
 	var imgSrc = "";
 	if(batteryStatus >= 0){
 		imgSrc = "icons/battery-empty.png";
@@ -100,11 +118,10 @@ function createBatteryElement (batteryStatus) {
 	}else{
 		imgSrc = "icons/battery-100.png";
 	}
-	return "<img src=\"" + imgSrc + "\" alt=\"Battery status " + batteryStatus +
-		"\">";
+	return imgSrc;
 }
 
-function createWirelessElement (wirelessSignal) {
+function createWirelessLoc (wirelessSignal) {
 	var imgSrc = "";
 	if(wirelessSignal >= 0){
 		imgSrc = "icons/network-wireless-0.png";
@@ -165,7 +182,7 @@ function mainMenu(elm){
 	var canc = document.createElement("div");
 	canc.id="cancel";
 	canc.classList.add("innerClick");
-	canc.onclick=innerClick;
+	//canc.onclick=innerClick;
 	canc.innerHTML="Cancel action";
 	//Close submenu
 	var clos = document.createElement("div");
@@ -182,7 +199,7 @@ function drawMenu(parent){
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
-	drawSend.onclick=innerClick;
+	//drawSend.onclick=innerClick;
 	drawSend.innerHTML="Send path";
 	//Close submenu button
 	var drawCanc = document.createElement("div");
@@ -200,19 +217,19 @@ function formMenu(parent){
 	var formFig8 = document.createElement("div");
 	formFig8.id="formFig8";
 	formFig8.classList.add("innerClick");
-	formFig8.onclick=innerClick;
+	//formFig8.onclick=innerClick;
 	formFig8.innerHTML="Figure of 8";
 	//Square button
 	var formSqua = document.createElement("div");
 	formSqua.id="formSqua";
 	formSqua.classList.add("innerClick");
-	formSqua.onclick=innerClick;
+	//formSqua.onclick=innerClick;
 	formSqua.innerHTML="Square";
 	//Star button
 	var formStar = document.createElement("div");
 	formStar.id="formStar";
 	formStar.classList.add("innerClick");
-	formStar.onclick=innerClick;
+	//formStar.onclick=innerClick;
 	formStar.innerHTML="Star";
 	//Close submenu button
 	var formCanc = document.createElement("div");
@@ -223,4 +240,28 @@ function formMenu(parent){
 	formCanc.innerHTML="Cancel";
 	
 	return [formFig8, formSqua, formStar, formCanc];
+}
+
+function danceMenu(parent){
+	//Dance alone
+	var danceAlo = document.createElement("div");
+	danceAlo.id="danceAlo";
+	danceAlo.classList.add("innerClick");
+	//danceAlo.onclick=innerClick;
+	danceAlo.innerHTML="Dance alone";
+	//Dance together
+	var danceTog = document.createElement("div");
+	danceTog.id="danceTog";
+	danceTog.classList.add("innerClick");
+	//danceTog.onclick=innerClick;
+	danceTog.innerHTML="Dance together";
+	//Close submenu
+	var danceCanc = document.createElement("div");
+	danceCanc.id="danceCanc";
+	danceCanc.classList.add("innerClick");
+	danceCanc.classList.add("closeMenu");
+	danceCanc.onclick=innerClick;
+	danceCanc.innerHTML="Cancel";
+	
+	return [danceAlo, danceTog, danceCanc];
 }
