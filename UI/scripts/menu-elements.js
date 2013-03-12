@@ -75,6 +75,9 @@ function createMenuDiv(parent){
 }
 
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
+	if(document.getElementById("r"+number)!==null){
+		return false;
+	}
 	var rDiv = document.createElement("div");
 	rDiv.classList.add("robot");
 	rDiv.classList.add("clickable");
@@ -109,6 +112,8 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	rDiv.appendChild(work);
 	
 	document.getElementById("menu_container").appendChild(rDiv);
+	
+	return true;
 }
 
 function updateRobotBattery(robot, batteryStatus){
