@@ -10,70 +10,37 @@
 	<script src="scripts/imports/jquery-ui.js"> </script>
 	<script src="scripts/imports/jquery-ui-min.js"> </script>
 	<script src="scripts/imports/socket.io.js"></script>
+	<script src="scripts/imports/kinetic.min.js"></script>
 
 	<!-- Our scripts -->
 	<script src="scripts/menu-elements.js"> </script>
 	<script src="scripts/banner.js"></script>
 	<script src="scripts/comm.js"> </script>
+	<script src="scripts/drawing.js"></script>
 
 
 	<script type="text/javascript">
+	var globalStage;
+	var globalLayer;
 	window.onload = function(){
-		var c=document.getElementById("robot_canvas");
-		var ctx=c.getContext("2d");
-
-		var grd=ctx.createLinearGradient(0, 0, 200, 0);
-		grd.addColorStop(0, "red");
-		grd.addColorStop(1, "white");
-
-		ctx.fillStyle=grd;
-		ctx.fillRect(10, 10, 150, 80);
-
-		$(function() {
-			$("#robot_canvas").draggable({
-			scroll:false,
-			stop:checkPos});
+		globalStage = new Kinetic.Stage({
+			container:document.getElementById("robot_canvas"),
+			width: 1000,
+			height: 1000,
+			dragBoundFunc: checkBound,
+			draggable:true
 		});
+		globalLayer = new Kinetic.Layer();
+		globalStage.add(globalLayer);
 
-		function checkPos( event, ui ) {
-			var containment = $( "#robot_area_containment" );
-			var canvas = $( "#robot_canvas" );
-			var vertEffect = false;
-			var horEffect = false;
-			if ( canvas.offset().top > containment.offset().top ) {
-				vertEffect = true;
-				canvas.offset( {
-					top:containment.offset().top, left:canvas.offset().left} );
-			} else if ( (canvas.offset().top + canvas.height()) <
-					(containment.offset().top + containment.height()) ) {
-				vertEffect = true;
-				canvas.offset( {
-					top:(containment.offset().top -
-						 (canvas.height() - containment.height())),
-					left:canvas.offset().left} );
-			}
-			if ( canvas.offset().left > containment.offset().left ) {
-				horEffect = true;
-				canvas.offset( {
-					top:canvas.offset().top, left:containment.offset().left} );
-			} else if ( (canvas.offset().left + canvas.width()) <
-					(containment.offset().left + containment.width()) ) {
-				horEffect = true;
-				canvas.offset( {
-					top:canvas.offset().top,
-					left:(containment.offset().left -
-						(canvas.width() - containment.width()))});
-			}
-
-			if ( vertEffect && horEffect) {
-				$("#robot_canvas").effect( "shake", {}, 500, function() {} );
-			} else if ( vertEffect ) {
-				$("#robot_canvas").effect( "bounce", {}, 500, function() {} );
-			} else if ( horEffect ) {
-				$("#robot_canvas").effect( "shake", {}, 500, function() {} );
-			}
-		};
-
+		var canvasBound = document.getElementById("robot_area_containment");
+		function checkBound(pos){
+			var newY = pos.y > 0 ? 0 : pos.y;
+			var newX = pos.x > 0 ? 0 : pos.x;
+			//Add bound check for bottom and right
+			return { x: newX, y:newY};	
+		}
+		drawRobot('robot1', 500, 500, 120);
 	 }
 
 	 </script>
@@ -168,9 +135,8 @@
 </div>
 
 <div id="robot_area_containment" class="robot_containment">
-	<canvas id="robot_canvas">
-	Your browser does not support HTML5-canvas
-	</canvas>
+	<div id="robot_canvas">
+	</div>
 </div>
 
 
