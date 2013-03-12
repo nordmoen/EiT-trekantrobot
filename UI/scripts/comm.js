@@ -17,14 +17,14 @@ $(document).ready(function(){
 	});
 	socket.on('disconnected', function () {
 		setBannerText("Disconected from server", -1);
-		gloabalSocket = null;
+		globalSocket = null;
 		alert('The connection was disrupted, if the page does not ' +
 			'try to reconnect try and reload the page, if that does ' +
 			'not help restart the server');
 	});
 	socket.on('reconnecting', function () {
 		setBannerText("Trying to reconnect to server", -1);
-		gloabalSocket = null;
+		globalSocket = null;
 		alert('The page is trying to reconnect to the server, during ' +
 			'this time the page can not be used and all commands ' +
 			'will timeout. If the page is not reconnected within ' +
@@ -33,7 +33,7 @@ $(document).ready(function(){
 	});
 	socket.on('reconnect', function () {
 		setBannerText("Reconnected successfully to server", 1000);
-		gloabalSocket = socket;
+		globalSocket = socket;
 	});
 	socket.on('error', function () {
 		setBannerText("The server connection had an accident", -1);
