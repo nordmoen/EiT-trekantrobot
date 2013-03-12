@@ -1,10 +1,17 @@
 var globalSocket = null;
+//Variable signifying if the socket is trying to connect, use this in conjunction
+//with globalSocket to decide which state the comm channel is in, if connecting the
+//socket should be null, if socket is connected, i.e. not null, connecting should
+//be false
 var connecting = false;
 var retries = 3;
 
 $(document).ready(function(){
+	//Connect to the server using socket.io once the page is loaded
 	var socket = io.connect(location.hostname + ':' + (parseInt(location.port) + 1));
 	connecting = true;
+	//Setting to true, because we are trying to connect, but
+	//are not yet connected
 	socket.on('connect', function () {
 		globalSocket = socket;
 		setBannerText("Connected to Server", 1000);
@@ -53,8 +60,35 @@ $(document).ready(function(){
 			'"THE WORLD IS ABOUT TO END!"');
 		connecting = false;
 	});
+
+	//Below are the Robot specific communications
+	socket.on('notify', notification);
+	socket.on('debug', debug);
+	socket.on('info', info);
+	socket.on('exception', exception);
+	socket.on('acceptMoveRequest', moveRequestAccepted);
+	//To add more of these support has to be added in server.js to emit more
+	//then just add more of the socket.on methods referencing functions
+	//which support the same variables as the emit function in server.js
 });
 
+//Functions handling messages from backend
+function notification(data){
+}
+
+function debug(data){
+}
+
+function info(data){
+}
+
+function exception(data){
+}
+
+function moveRequestAccepted(data){
+}
+
+//Functions regarding communication with backend
 function sendMovementReq(data, callback){
 	__trySend(data, callback, 0, 'requestMove');
 }
