@@ -9,6 +9,21 @@ var client = null;
 var port = 8125;
 var hostAddr = '127.0.0.1';
 
+//These are the robots which should be discovered through XBee
+//they should be objects({}) containing a name, the wireless
+//strength, batteryStatus and their working status, i.e. are
+//they doing some work or just fiddling about.
+//Format robot === {name: robotNumber, wireless:wirelessStatus,
+//battery:batteryStatus, working:doingWork}
+var robots = [];
+
+//Testing robots:
+robots.push({name:'1', wireless:40, battery:70, working:false});
+robots.push({name:'2', wireless:50, battery:100, working:false});
+robots.push({name:'3', wireless:100, battery:10, working:true});
+robots.push({name:'4', wireless:13, battery:0, working:false});
+robots.push({name:'5', wireless:0, battery:50, working:true});
+
 if(process.argv.length > 2){
 	hostAddr = process.argv[2];
 	if (process.argv.length > 3){
@@ -24,7 +39,13 @@ ioServer.on('connection', function (sock) {
 		console.log('A new client is connected to this websocket');
 		client = sock;
 		client.on('disconnect', onClientDisconnect);
-		//TODO: Add the necessary message functions here
+		client.on('requestMove', onClientRequestMove);
+		client.on('askDebug', onClientAskDebug);
+		client.on('askInfo', onClientAskInfo);
+		robots.forEach(function (item) {
+			client.emit('robotConnected', item.name, item.wireless,
+				item.battery, item.working);
+		});
 	}else{
 		console.log('There is already a client connected, refusing connection');
 		sock.emit('connect_failed', 'Busy');
@@ -35,6 +56,20 @@ ioServer.on('connection', function (sock) {
 function onClientDisconnect () {
 	console.log('Client disconnected from server websocket');
 	client = null;
+}
+function onClientRequestMove(data) {
+	console.log('Client sent a request for movement');
+	//TODO: Add communication with XBee
+}
+
+function onClientAskDebug(data){
+	console.log('Client sent a request for debug');
+	//TODO: Add communication with XBee
+}
+
+function onClientAskInfo(data){
+	console.log('Client sent a request for information');
+	//TODO: Add communication with XBee
 }
 
 var server = http.createServer(function (request, response) {
