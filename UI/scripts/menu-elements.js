@@ -97,7 +97,10 @@ function createMenuDiv(parent){
 		return formMenu(parent);
 	}
 	if (parent.id==="dance"){
-		return danceMenu(parent)
+		return danceMenu(parent);
+	}
+	if (parent.id==="waypoint"){
+		return waypointMenu(parent);
 	}
 }
 
@@ -221,6 +224,13 @@ function mainMenu(elm){
 	drawPath.title="Drawing path";
 	drawPath.onclick=innerClick;
 	drawPath.innerHTML = "Draw path";
+	//Waypoints submenu
+	var wayp = document.createElement("div");
+	wayp.id="waypoint";
+	wayp.classList.add("innerClick");
+	wayp.title="Add waypoints";
+	wayp.onclick=innerClick;
+	wayp.innerHTML="Place waypoints";
 	//Formation submenu
 	var formation = document.createElement("div");
 	formation.id="formation";
@@ -268,13 +278,16 @@ function mainMenu(elm){
 	clos.onclick=innerClick;
 	clos.innerHTML = "Close";
 
-	return [drawPath, formation, dance, /**games, cust, map,**/ canc, clos];
+	return [drawPath, formation, wayp, dance, /**games, cust, map,**/ canc, clos];
 }
 
 function clearDrawLine(){
 	globalStage.getContainer().removeEventListener("mousedown", globalStage.__mousedown);
 	globalStage.getContainer().removeEventListener("mousemove", globalStage.__mousemove);
 	globalStage.getContainer().removeEventListener("mouseup", globalStage.__mouseup);
+	globalStage.getContainer().removeEventListener("mousedown", globalStage.__mousedownwp);
+	globalStage.getContainer().removeEventListener("mousemove", globalStage.__mousemovewp);
+	globalStage.getContainer().removeEventListener("mouseup", globalStage.__mouseupwp);
 	globalStage.setDraggable(true);
 	var line;
 	if(line = globalStage.get("#drawLine")[0]){
@@ -285,21 +298,17 @@ function clearDrawLine(){
 }
 
 
-function actionSendDrawing(event){
+function actionSendMovement(event){
 	var caller = this;
 	var line = globalStage.get("#drawLine")[0];
 	var linePoints = line.getPoints();
-	var lineTuples = [];
 	clearDrawLine();
-	for(var i=0; i<line.length; i+=2){
-		lineTuples.push((line[i], line[i+1]));
-	}
 	var robot = getRobotId(this);
 	var data = {
 		to: robot,
 		data: {
 			type: "move_request",
-			request: lineTuples
+			request: linePoints
 		}
 	};
 	sendMovementReq(data, function(bool){
@@ -315,6 +324,7 @@ function actionSendDrawing(event){
 }
 
 function drawMenu(parent){
+	clearDrawLine();
 	globalStage.__moving=false;
 	globalStage.__finished=false;
 	globalStage.setDraggable(false);
@@ -371,7 +381,7 @@ function drawMenu(parent){
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
-	drawSend.onclick=actionSendDrawing;
+	drawSend.onclick=actionSendMovement;
 	drawSend.innerHTML="Send path";
 	//Close submenu button
 	var drawCanc = document.createElement("div");
@@ -384,6 +394,71 @@ function drawMenu(parent){
 	return [drawSend, drawCanc];
 }
 
+function waypointMenu(parent){
+	clearDrawLine();
+	globalStage.__moving=false;
+	globalStage.setDraggable(false);
+	var robot= getRobotId(parent);
+
+	globalStage.__line = new Kinetic.Line({
+		points:[globalStage.get("#"+robot)[0].getPosition()],
+		stroke:"red",
+		id:"drawLine"
+	});
+	globalLayer.add(globalStage.__line);
+	globalLayer.drawScene();
+
+	if(!globalStage.__mousedownwp){
+		globalStage.__mousedownwp = function(){
+			var stagePos=globalStage.getAbsolutePosition();
+			var mousePos=globalStage.getMousePosition();
+			globalStage.__line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
+
+			globalStage.__moving=true;
+			globalLayer.drawScene();
+		};
+	}
+
+	if(!globalStage.__mousemovewp){
+		globalStage.__mousemovewp = function(){
+			if(globalStage.__moving){
+				var stagePos=globalStage.getAbsolutePosition();
+				var mousePos=globalStage.getMousePosition();
+				var len = globalStage.__line.getPoints().length;
+				globalStage.__line.getPoints()[len-1].x = mousePos.x-stagePos.x;
+				globalStage.__line.getPoints()[len-1].y = mousePos.y-stagePos.y;
+
+				globalStage.__moving=true;
+				globalLayer.drawScene();
+			}
+		};
+	}
+
+	if(!globalStage.__mouseupwp){
+		globalStage.__mouseupwp = function(){
+			globalStage.__moving = false;
+		};
+	}
+
+	globalStage.getContainer().addEventListener("mousedown", globalStage.__mousedownwp);
+	globalStage.getContainer().addEventListener("mousemove", globalStage.__mousemovewp);
+	globalStage.getContainer().addEventListener("mouseup", globalStage.__mouseupwp);
+	//SendWaypointsButton
+	var waypSend = document.createElement("div");
+	waypSend.id="waypSend";
+	waypSend.classList.add("innerClick");
+	waypSend.onclick=actionSendMovement;
+	waypSend.innerHTML="Send waypoints";
+	//Close submenu button
+	var waypCanc = document.createElement("div");
+	waypCanc.id="waypCancel";
+	waypCanc.classList.add("innerClick");
+	waypCanc.classList.add("closeMenu");
+	waypCanc.onclick=innerClick;
+	waypCanc.innerHTML="Cancel";
+
+	return [waypSend, waypCanc];
+}
 function formMenu(parent){
 	//Figure-of-8 button
 	var formFig8 = document.createElement("div");
@@ -440,7 +515,7 @@ function danceMenu(parent){
 
 function getRobotId(caller){
 	var robot;
-	if (caller.id==="cancel" || caller.id==="drawPath"){
+	if (caller.id==="cancel" || caller.id==="drawPath" || caller.id==="waypoint"){
 		robot = caller.parentNode.parentNode.id.substring(1);
 	} else {
 		robot = caller.parentNode.parentNode.parentNode.parentNode.id.substring(1);
