@@ -100,6 +100,7 @@ var reqs;
 
 function onClientRequestMove(data) {
 	console.log('Client sent a request for movement');
+	//--TEST below--
 	reqs = data.data.request;
 	sendToClient('acceptMoveRequest', {id:data.to, type:"accept_move"});
 	var i = 0;
@@ -125,6 +126,7 @@ function onClientRequestMove(data) {
 		}
 	};
 	setTimeout(func, 300);
+	//--TEST END --
 	//TODO: Add communication with XBee
 }
 
