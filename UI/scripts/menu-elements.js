@@ -20,12 +20,8 @@ function innerClick(event){
 
 function actionClick(event){
 	var caller = this;
-	var robot;
-	if (this.id==="cancel"){
-		robot = this.parentNode.parentNode.id.substring(1);
-	} else {
-		robot = this.parentNode.parentNode.parentNode.parentNode.id.substring(1);
-	}
+	var robot = getRobotId(this);
+
 	var data={
 		to: robot,
 		data: {
@@ -36,20 +32,24 @@ function actionClick(event){
 		}
 	};
 	sendCommand(data, function(bool){
+		alert("this is\n a simple test");
 		if(bool){
 			removeMenu(caller, false);
 		} else {
-			alert("a gruesome error has occured somewhere");
+			alert("You have been eaten by a grue.\n"+
+			"Lost connection to the server"); //This error should never be displayed.
 		}
 	});
 	event.stopPropagation();
 }
 
+
+
 function addMenu(elm){
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
     		removeMenu(element, false);
-    	});    
+    	});
     }
     elm.classList.add("selected");
     setBannerText(elm.title, -1);
@@ -62,7 +62,7 @@ function addMenu(elm){
     for( var i=0; i < children.length; i++){
         menuDiv.appendChild(children[i]);
     }
-    
+
     $("#menuDiv").effect( "slide", {direction:"right"}, 250, function () {} );
 }
 
@@ -112,7 +112,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	rDiv.title = "Robot " + number;
 	rDiv.innerHTML=rDiv.title + "<br />";
 	rDiv.onclick=robotClick
-	
+
 	var batt = document.createElement("img");
 	batt.src=createBatteryLoc(batteryStatus);
 	batt.alt="Battery status " + batteryStatus+"%";
@@ -120,7 +120,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	batt.classList.add("battIcon");
 	batt.id="r"+number+"batt";
 	rDiv.appendChild(batt);
-	
+
 	var wifi = document.createElement("img");
 	wifi.src=createWirelessLoc(wirelessSignal);
 	wifi.alt="Wireless signal " + wirelessSignal+"%";
@@ -128,7 +128,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	wifi.classList.add("wifiIcon");
 	wifi.id="r"+number+"wifi";
 	rDiv.appendChild(wifi);
-	
+
 	var work = document.createElement("img");
 	work.src = createWorkingLoc(working);
 	work.alt = ((working) ? "Working" : "");
@@ -137,9 +137,9 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	work.classList.add("workIcon");
 	work.id="r"+number+"work";
 	rDiv.appendChild(work);
-	
+
 	document.getElementById("menu_container").appendChild(rDiv);
-	
+
 	return true;
 }
 
@@ -267,16 +267,91 @@ function mainMenu(elm){
 	clos.classList.add("innerClick");
 	clos.onclick=innerClick;
 	clos.innerHTML = "Close";
-	
+
 	return [drawPath, formation, dance, /**games, cust, map,**/ canc, clos];
 }
 
+function actionSendDrawing(event){
+	globalStage.on("mousedown", function(){});
+	globalStage.on("mousemove", function(){});
+	globalStage.on("mouseup", function(){});
+	globalStage.setDraggable(true);
+	var caller = this;
+	var line = globalStage.get("#drawLine")[0];
+	var linePoints = line.getPoints();
+	line.remove();
+	globalLayer.drawScene();
+	var lineTuples = [];
+	for(var i=0; i<line.length; i+=2){
+		lineTuples.push((line[i], line[i+1]));
+	}
+	var robot = getRobotId(this);
+	var data = {
+		to: robot,
+		data: {
+			type: "move_request",
+			request: lineTuples
+		}
+	};
+	sendMovementReq(data, function(bool){
+		if(bool){
+			removeMenu(caller);
+		}else{
+			alert("You have been eaten by a grue.\n"+
+			"Lost connection to the server");
+		}
+	});
+
+	event.stopPropagation();
+}
+
+
 function drawMenu(parent){
+	var moving=false;
+	globalStage.setDraggable(false);
+	var robot = getRobotId(parent);
+	var line = new Kinetic.Line({
+		points:[{x:0, y:0}, globalStage.get("#"+robot)[0].getPosition()],
+		stroke:"red",
+		id:"drawLine"
+	});
+	globalLayer.add(line);
+	globalLayer.drawScene();
+
+	globalStage.on("mousedown", function(){
+		if(moving){
+			alert("Line already drawn.\nPlease send to robot or reset.");
+		}else{
+			var mousePos=globalStage.getMousePosition();
+			line.getPoints().push({x: mousePos.x, y:mousePos.y});
+
+
+			moving=true;
+			globalLayer.drawScene();
+		}
+	});
+
+
+	globalStage.on("mousemove", function(){
+		if(moving){
+			var mousePos=globalStage.getMousePosition();
+			line.getPoints().push({x: mousePos.x, y:mousePos.y});
+
+			moving=true;
+			globalLayer.drawScene();
+		}
+	});
+
+	globalStage.on("mouseup", function(){
+		moving = false;
+	});
+
+
 	//Send path button
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
-	drawSend.onclick=actionClick;
+	drawSend.onclick=actionSendDrawing;
 	drawSend.innerHTML="Send path";
 	//Close submenu button
 	var drawCanc = document.createElement("div");
@@ -285,7 +360,7 @@ function drawMenu(parent){
 	drawCanc.classList.add("closeMenu");
 	drawCanc.onclick=innerClick;
 	drawCanc.innerHTML="Cancel";
-	
+
 	return [drawSend, drawCanc];
 }
 
@@ -315,7 +390,7 @@ function formMenu(parent){
 	formCanc.classList.add("closeMenu");
 	formCanc.onclick=innerClick;
 	formCanc.innerHTML="Cancel";
-	
+
 	return [formFig8, formSqua, formStar, formCanc];
 }
 
@@ -339,11 +414,16 @@ function danceMenu(parent){
 	danceCanc.classList.add("closeMenu");
 	danceCanc.onclick=innerClick;
 	danceCanc.innerHTML="Cancel";
-	
+
 	return [danceAlo, danceTog, danceCanc];
 }
-/**
-function findRobot(event){
-	alert("3: " + this.parentNode.parentNode.title);//for cancel action menu-element
-	alert("5: " + this.parentNode.parentNode.parentNode.parentNode.title); //for inner submenus
-}**/
+
+function getRobotId(caller){
+	var robot;
+	if (caller.id==="cancel" || caller.id==="drawPath"){
+		robot = caller.parentNode.parentNode.id.substring(1);
+	} else {
+		robot = caller.parentNode.parentNode.parentNode.parentNode.id.substring(1);
+	}
+	return robot;
+}

@@ -12,7 +12,7 @@ function drawRobot(id, x, y, direction) {
 			id: id
 		});
 		globalLayer.add(rWedge);
-		globalStage.add(globalLayer);
+		globalLayer.drawScene();
 	}else{
 		move(id, x, y, direction);
 	}
@@ -23,4 +23,5 @@ function move(id, x, y, direction){
 	robo.setX(x);
 	robo.setY(y);
 	robo.setRotationDeg(direction);
+	globalLayer.drawScene();
 }
