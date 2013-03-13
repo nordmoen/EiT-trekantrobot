@@ -57,7 +57,7 @@ ioServer.on('connection', function (sock) {
 
 //Parse a message coming from one of the robots and send that message
 //to the UI, if the message is important the method relaying the information,
-//e.g. sendNotification, must take care to save its data and then once the 
+//e.g. sendNotification, must take care to save its data and then once the
 //client is up resend
 function parseAndSendToUI(data){
 	switch(data.type){
@@ -112,10 +112,10 @@ function onClientAskInfo(data){
 function onClientSendCommand(data){
 	console.log('Client sent a command packet');
 	//TODO: Unpack and communicate with XBee
-	
+
 	//This line is only for testing/showing off purposes
 	//client.emit('robotConnected', '6', 73, 34, true);
-	
+
 }
 
 var server = http.createServer(function (request, response) {
@@ -169,7 +169,7 @@ server.on('error', function (err) {
 				'this is the case just wait a minutt and try again');
 			break;
 		default:
-			console.log('Could not recognize the error.\n' + 
+			console.log('Could not recognize the error.\n' +
 				err);
 			break;
 	}

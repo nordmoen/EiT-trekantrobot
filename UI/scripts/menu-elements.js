@@ -315,36 +315,29 @@ function actionSendDrawing(event){
 }
 
 function drawMenu(parent){
-	var moving=false;
-	var finished=false;
+	globalStage.__moving=false;
+	globalStage.__finished=false;
 	globalStage.setDraggable(false);
-	var bg = new Kinetic.Rect({
-		x:0,
-		y:0,
-		width: globalStage.getWidth(),
-		heigh: globalStage.getHeight()
-	});
 
-	globalLayer.add(bg);
 	var robot = getRobotId(parent);
-	var line = new Kinetic.Line({
+	globalStage.__line = new Kinetic.Line({
 		points:[globalStage.get("#"+robot)[0].getPosition()],
 		stroke:"red",
 		id:"drawLine"
 	});
-	globalLayer.add(line);
+	globalLayer.add(globalStage.__line);
 	globalLayer.drawScene();
 
 	if(!globalStage.__mousedown){
 		globalStage.__mousedown = function(){
-			if(finished){
+			if(globalStage.__finished){
 				alert("Line already drawn.\nPlease send to robot or reset.");
 			}else{
 				var stagePos=globalStage.getAbsolutePosition();
 				var mousePos=globalStage.getMousePosition();
-				line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
+				globalStage.__line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
 
-				moving=true;
+				globalStage.__moving=true;
 				globalLayer.drawScene();
 			}
 		};
@@ -352,12 +345,12 @@ function drawMenu(parent){
 
 	if(!globalStage.__mousemove){
 		globalStage.__mousemove = function(){
-			if(moving){
+			if(globalStage.__moving){
 				var stagePos=globalStage.getAbsolutePosition();
 				var mousePos=globalStage.getMousePosition();
-				line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
+				globalStage.__line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
 
-				moving=true;
+				globalStage.__moving=true;
 				globalLayer.drawScene();
 			}
 		};
@@ -365,8 +358,8 @@ function drawMenu(parent){
 
 	if(!globalStage.__mouseup){
 		globalStage.__mouseup = function(){
-			moving=false;
-			finished=true;
+			globalStage.__moving=false;
+			globalStage.__finished=true;
 		};
 	}
 
