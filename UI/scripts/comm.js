@@ -70,7 +70,10 @@ $(document).ready(function(){
 	socket.on('acceptMoveRequest', moveRequestAccepted);
 	//The robot connected event is special because it will be some XBee magic
 	//to have this emit from server once server sees a robot through XBee
-	socket.on('robotConnected', createRobotDiv);
+	socket.on('robotConnected', function (id, wire, batt, working, pos, direc){
+		createRobotDiv(id, wire, batt, working);
+		drawRobot(id, pos.x, pos.y, direc);
+	});
 	//To add more of these support has to be added in server.js to emit more
 	//then just add more of the socket.on methods referencing functions
 	//which support the same variables as the emit function in server.js

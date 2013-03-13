@@ -18,11 +18,11 @@ var hostAddr = '127.0.0.1';
 var robots = [];
 
 //Testing robots:
-robots.push({name:'1', wireless:40, battery:70, working:false});
-robots.push({name:'2', wireless:50, battery:100, working:false});
-robots.push({name:'3', wireless:100, battery:10, working:true});
-robots.push({name:'4', wireless:13, battery:0, working:false});
-robots.push({name:'5', wireless:0, battery:50, working:true});
+robots.push({name:'1', wireless:40, battery:70, working:false, pos:{x:400, y:20}, direction:0});
+robots.push({name:'2', wireless:50, battery:100, working:false, pos:{x:40, y:0}, direction:0});
+robots.push({name:'3', wireless:100, battery:10, working:true, pos:{x:200, y:200}, direction:0});
+robots.push({name:'4', wireless:13, battery:0, working:false, pos:{x:100, y:300}, direction:0});
+robots.push({name:'5', wireless:0, battery:50, working:true, pos:{x:40, y:20}, direction:0});
 
 if(process.argv.length > 2){
 	hostAddr = process.argv[2];
@@ -45,7 +45,8 @@ ioServer.on('connection', function (sock) {
 		client.on('sendCommand', onClientSendCommand);
 		robots.forEach(function (item) {
 			client.emit('robotConnected', item.name, item.wireless,
-				item.battery, item.working);
+				item.battery, item.working, item.pos,
+				item.direction);
 		});
 	}else{
 		console.log('There is already a client connected, refusing connection');
