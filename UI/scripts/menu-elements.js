@@ -21,14 +21,14 @@ function innerClick(event){
 function actionClick(event){
 	var caller = this;
 	var robot = getRobotId(this);
+	var dataOptions = {};
 
 	var data={
 		to: robot,
 		data: {
 			type: "command",
 			command: this.id,
-			options: {
-				}
+			options: dataOptions
 		}
 	};
 	sendCommand(data, function(bool){
@@ -85,7 +85,6 @@ function removeMenu(elm, reset){
 	clearDrawLine();
 }
 
-// Dummy-function, needs to add proper elements that expand and work.
 function createMenuDiv(parent){
 	if (parent.classList.contains("robot")){
 		return mainMenu(parent);
@@ -134,7 +133,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 
 	var work = document.createElement("img");
 	work.src = createWorkingLoc(working);
-	work.alt = ((working) ? "Working" : "");
+	work.alt = ((working) ? "Working" : "not Working");
 	work.height=24;
 	work.title = work.alt;
 	work.classList.add("workIcon");
@@ -166,11 +165,14 @@ function updateRobotWireless(robot, wirelessSignal){
 
 function updateRobotWorking(robot, working){
 	var work = document.getElementById("r"+robot+"work");
-	work.src = createWorkingLoc(working);
-	work.alt = ((working) ? "Working" : "Not working");
-	setBannerText("Robot "+ robot +" is now "+ work.alt, 1500);
-	work.title = work.alt;
-	return true;
+	if((work.alt ==="not Working" && working) || (work.alt==="Working" && !working)){
+		work.src = createWorkingLoc(working);
+		work.alt = ((working) ? "Working" : "not Working");
+		setBannerText("Robot "+ robot +" is now "+ work.alt, 1500);
+		work.title = work.alt;
+		return true;
+	}
+	return false;
 }
 
 
@@ -178,7 +180,7 @@ function createWorkingLoc (working) {
 	if (working) {
 		return "icons/working.png";
 	}else{
-		return "";
+		return "icons/nowork.png";
 	}
 }
 
