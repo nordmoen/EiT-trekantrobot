@@ -308,7 +308,7 @@ function actionSendMovement(event){
 		to: robot,
 		data: {
 			type: "move_request",
-			request: linePoints
+			request: [linePoints]
 		}
 	};
 	sendMovementReq(data, function(bool){
