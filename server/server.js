@@ -94,8 +94,27 @@ function onClientDisconnect () {
 	console.log('Client disconnected from server websocket');
 	client = null;
 }
+
+//Just a simple test to test the robot movements
+var reqs;
+
 function onClientRequestMove(data) {
 	console.log('Client sent a request for movement');
+	reqs = data.data.requests;
+	console.log(data.data);
+	sendToClient('acceptMoveRequest', {id:data.to, type:"accept_move"});
+	var func = function (){
+		var pos = reqs.pop();
+		sendNotification({id:data.to,
+			type:"notify",
+			pos:{y:pos.y, x:pos.x},
+			speed: 10,
+			direction: 23});
+		if(reqs.length > 0){
+			setTimeout(func, 300);
+		}
+	};
+	setTimeout(func, 300);
 	//TODO: Add communication with XBee
 }
 
