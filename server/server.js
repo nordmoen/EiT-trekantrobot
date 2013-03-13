@@ -100,18 +100,28 @@ var reqs;
 
 function onClientRequestMove(data) {
 	console.log('Client sent a request for movement');
-	reqs = data.data.requests;
-	console.log(data.data);
+	reqs = data.data.request;
 	sendToClient('acceptMoveRequest', {id:data.to, type:"accept_move"});
+	var i = 0;
 	var func = function (){
-		var pos = reqs.pop();
+		var pos = reqs[i];
+		i++;
 		sendNotification({id:data.to,
 			type:"notify",
 			pos:{y:pos.y, x:pos.x},
 			speed: 10,
-			direction: 23});
-		if(reqs.length > 0){
+			direction: 23,
+			working: true});
+		if(reqs.length > i){
 			setTimeout(func, 300);
+		}else{
+			pos = reqs[reqs.length - 1];
+			sendNotification({id:data.to,
+			type:"notify",
+			pos:{y:pos.y, x:pos.x},
+			speed: 0,
+			direction: 23,
+			working: false});
 		}
 	};
 	setTimeout(func, 300);

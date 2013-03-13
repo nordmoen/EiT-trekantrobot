@@ -22,8 +22,8 @@ function drawRobot(id, x, y, direction) {
 //Private function
 function __move(id, x, y, direction){
 	var robo = globalStage.get("#" + id)[0];
-	var newX = robo.getX() - x;
-	var newY = robo.getY() - y;
+	var newX = x - robo.getX();
+	var newY = y - robo.getY();
 	robo.move(newX, newY);
 	robo.setRotationDeg(direction);
 	globalLayer.drawScene();

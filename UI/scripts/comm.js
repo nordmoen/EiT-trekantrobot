@@ -83,6 +83,7 @@ function notification(data){
 	//For the moment just move the robot since a notification message
 	//does not contain more info
 	drawRobot(data.id, data.pos.x, data.pos.y, data.direction);
+	updateRobotWorking(data.id, data.working);
 }
 
 function debug(data){
