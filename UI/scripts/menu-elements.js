@@ -167,7 +167,7 @@ function updateRobotWireless(robot, wirelessSignal){
 function updateRobotWorking(robot, working){
 	var work = document.getElementById("r"+robot+"work");
 	work.src = createWorkingLoc(working);
-	work.alt = ((working) ? "Working" : "Not working");
+	work.alt = ((working) ? "Working" : "not Working");
 	setBannerText("Robot "+ robot +" is now "+ work.alt, 1500);
 	work.title = work.alt;
 	return true;
@@ -178,7 +178,7 @@ function createWorkingLoc (working) {
 	if (working) {
 		return "icons/working.png";
 	}else{
-		return "";
+		return "icons/nowork.png";
 	}
 }
 
