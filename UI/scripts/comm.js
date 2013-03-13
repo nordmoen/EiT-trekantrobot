@@ -79,7 +79,7 @@ $(document).ready(function(){
 function notification(data){
 	//For the moment just move the robot since a notification message
 	//does not contain more info
-	move(data.id, data.pos.x, data.pos.y, data.direction);
+	drawRobot(data.id, data.pos.x, data.pos.y, data.direction);
 }
 
 function debug(data){

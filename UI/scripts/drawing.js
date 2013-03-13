@@ -9,18 +9,23 @@ function drawRobot(id, x, y, direction) {
 			stroke: 'blue',
 			strokeWidth: 3,
 			rotationDeg: direction,
-			id: id
+			id: id,
 		});
+		rWedge.setOffset(rWedge.getWidth() / 2.0, rWedge.getHeight() / 2.0);
 		globalLayer.add(rWedge);
 		globalStage.add(globalLayer);
 	}else{
-		move(id, x, y, direction);
+		__move(id, x, y, direction);
 	}
 }
 
-function move(id, x, y, direction){
-	var robo = globalLayer.get("#" + id);
-	robo.setX(x);
-	robo.setY(y);
+//Private function
+function __move(id, x, y, direction){
+	var robo = globalStage.get("#" + id)[0];
+	var newX = robo.getX() - x;
+	var newY = robo.getY() - y;
+	robo.move(newX, newY);
 	robo.setRotationDeg(direction);
+	globalLayer.add(robo);
+	globalStage.add(globalLayer);
 }

@@ -53,6 +53,41 @@ ioServer.on('connection', function (sock) {
 	}
 });
 
+//Parse a message coming from one of the robots and send that message
+//to the UI, if the message is important the method relaying the information,
+//e.g. sendNotification, must take care to save its data and then once the 
+//client is up resend
+function parseAndSendToUI(data){
+	switch(data.type){
+		case 'notify':
+			sendNotification(data);
+			break;
+		case 'debug_return':
+			break;
+		case 'info_return':
+			break;
+		case 'exception':
+			break;
+		case 'accept_move':
+			break;
+	}
+}
+
+//Low level function to emit data to the client, will return true if successful and
+//false otherwise.
+function sendToClient(emitSignal, data){
+	if(client !== null){
+		client.emit(emitSignal, data);
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function sendNotification(data){
+	sendToClient('notify', data);
+}
+
 function onClientDisconnect () {
 	console.log('Client disconnected from server websocket');
 	client = null;
