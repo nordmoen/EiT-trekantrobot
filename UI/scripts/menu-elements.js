@@ -18,6 +18,33 @@ function innerClick(event){
 	event.stopPropagation();
 }
 
+function actionClick(event){
+	var caller = this;
+	var robot;
+	if (this.id==="cancel"){
+		robot = this.parentNode.parentNode.id.substring(1);
+	} else {
+		robot = this.parentNode.parentNode.parentNode.parentNode.id.substring(1);
+	}
+	var data={
+		to: robot,
+		data: {
+			type: "command",
+			command: this.id,
+			options: {
+				}
+		}
+	};
+	sendCommand(data, function(bool){
+		if(bool){
+			removeMenu(caller, false);
+		} else {
+			alert("a gruesome error has occured somewhere");
+		}
+	});
+	event.stopPropagation();
+}
+
 function addMenu(elm){
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
@@ -232,7 +259,7 @@ function mainMenu(elm){
 	var canc = document.createElement("div");
 	canc.id="cancel";
 	canc.classList.add("innerClick");
-	//canc.onclick=innerClick;
+	canc.onclick=actionClick;
 	canc.innerHTML="Cancel action";
 	//Close submenu
 	var clos = document.createElement("div");
@@ -249,7 +276,7 @@ function drawMenu(parent){
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
-	//drawSend.onclick=innerClick;
+	drawSend.onclick=actionClick;
 	drawSend.innerHTML="Send path";
 	//Close submenu button
 	var drawCanc = document.createElement("div");
@@ -267,19 +294,19 @@ function formMenu(parent){
 	var formFig8 = document.createElement("div");
 	formFig8.id="formFig8";
 	formFig8.classList.add("innerClick");
-	//formFig8.onclick=innerClick;
+	formFig8.onclick=actionClick;
 	formFig8.innerHTML="Figure of 8";
 	//Square button
 	var formSqua = document.createElement("div");
 	formSqua.id="formSqua";
 	formSqua.classList.add("innerClick");
-	//formSqua.onclick=innerClick;
+	formSqua.onclick=actionClick;
 	formSqua.innerHTML="Square";
 	//Star button
 	var formStar = document.createElement("div");
 	formStar.id="formStar";
 	formStar.classList.add("innerClick");
-	//formStar.onclick=innerClick;
+	formStar.onclick=actionClick;
 	formStar.innerHTML="Star";
 	//Close submenu button
 	var formCanc = document.createElement("div");
@@ -297,13 +324,13 @@ function danceMenu(parent){
 	var danceAlo = document.createElement("div");
 	danceAlo.id="danceAlo";
 	danceAlo.classList.add("innerClick");
-	//danceAlo.onclick=innerClick;
+	danceAlo.onclick=actionClick;
 	danceAlo.innerHTML="Dance alone";
 	//Dance together
 	var danceTog = document.createElement("div");
 	danceTog.id="danceTog";
 	danceTog.classList.add("innerClick");
-	//danceTog.onclick=innerClick;
+	danceTog.onclick=actionClick;
 	danceTog.innerHTML="Dance together";
 	//Close submenu
 	var danceCanc = document.createElement("div");
@@ -315,3 +342,8 @@ function danceMenu(parent){
 	
 	return [danceAlo, danceTog, danceCanc];
 }
+/**
+function findRobot(event){
+	alert("3: " + this.parentNode.parentNode.title);//for cancel action menu-element
+	alert("5: " + this.parentNode.parentNode.parentNode.parentNode.title); //for inner submenus
+}**/
