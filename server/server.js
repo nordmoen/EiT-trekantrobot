@@ -42,6 +42,7 @@ ioServer.on('connection', function (sock) {
 		client.on('requestMove', onClientRequestMove);
 		client.on('askDebug', onClientAskDebug);
 		client.on('askInfo', onClientAskInfo);
+		client.on('sendCommand', onClientSendCommand);
 		robots.forEach(function (item) {
 			client.emit('robotConnected', item.name, item.wireless,
 				item.battery, item.working);
@@ -105,6 +106,15 @@ function onClientAskDebug(data){
 function onClientAskInfo(data){
 	console.log('Client sent a request for information');
 	//TODO: Add communication with XBee
+}
+
+function onClientSendCommand(data){
+	console.log('Client sent a command packet');
+	//TODO: Unpack and communicate with XBee
+	
+	//This line is only for testing/showing off purposes
+	//client.emit('robotConnected', '6', 73, 34, true);
+	
 }
 
 var server = http.createServer(function (request, response) {

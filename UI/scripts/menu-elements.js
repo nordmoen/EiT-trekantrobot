@@ -18,11 +18,37 @@ function innerClick(event){
 	event.stopPropagation();
 }
 
+function actionClick(event){
+	var caller = this;
+	var robot = getRobotId(this);
+
+	var data={
+		to: robot,
+		data: {
+			type: "command",
+			command: this.id,
+			options: {
+				}
+		}
+	};
+	sendCommand(data, function(bool){
+		if(bool){
+			removeMenu(caller, false);
+		} else {
+			alert("You have been eaten by a grue.\n"+
+			"Lost connection to the server"); //This error should never be displayed.
+		}
+	});
+	event.stopPropagation();
+}
+
+
+
 function addMenu(elm){
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
     		removeMenu(element, false);
-    	});    
+    	});
     }
     elm.classList.add("selected");
     setBannerText(elm.title, -1);
@@ -35,7 +61,7 @@ function addMenu(elm){
     for( var i=0; i < children.length; i++){
         menuDiv.appendChild(children[i]);
     }
-    
+
     $("#menuDiv").effect( "slide", {direction:"right"}, 250, function () {} );
 }
 
@@ -56,6 +82,7 @@ function removeMenu(elm, reset){
 	if(reset){
 		resetBanner();
 	}
+	clearDrawLine();
 }
 
 // Dummy-function, needs to add proper elements that expand and work.
@@ -75,6 +102,9 @@ function createMenuDiv(parent){
 }
 
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
+	if(document.getElementById("r"+number)!==null){
+		return false;
+	}
 	var rDiv = document.createElement("div");
 	rDiv.classList.add("robot");
 	rDiv.classList.add("clickable");
@@ -82,7 +112,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	rDiv.title = "Robot " + number;
 	rDiv.innerHTML=rDiv.title + "<br />";
 	rDiv.onclick=robotClick
-	
+
 	var batt = document.createElement("img");
 	batt.src=createBatteryLoc(batteryStatus);
 	batt.alt="Battery status " + batteryStatus+"%";
@@ -90,7 +120,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	batt.classList.add("battIcon");
 	batt.id="r"+number+"batt";
 	rDiv.appendChild(batt);
-	
+
 	var wifi = document.createElement("img");
 	wifi.src=createWirelessLoc(wirelessSignal);
 	wifi.alt="Wireless signal " + wirelessSignal+"%";
@@ -98,7 +128,7 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	wifi.classList.add("wifiIcon");
 	wifi.id="r"+number+"wifi";
 	rDiv.appendChild(wifi);
-	
+
 	var work = document.createElement("img");
 	work.src = createWorkingLoc(working);
 	work.alt = ((working) ? "Working" : "");
@@ -107,8 +137,10 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	work.classList.add("workIcon");
 	work.id="r"+number+"work";
 	rDiv.appendChild(work);
-	
+
 	document.getElementById("menu_container").appendChild(rDiv);
+
+	return true;
 }
 
 function updateRobotBattery(robot, batteryStatus){
@@ -227,7 +259,7 @@ function mainMenu(elm){
 	var canc = document.createElement("div");
 	canc.id="cancel";
 	canc.classList.add("innerClick");
-	//canc.onclick=innerClick;
+	canc.onclick=actionClick;
 	canc.innerHTML="Cancel action";
 	//Close submenu
 	var clos = document.createElement("div");
@@ -235,16 +267,118 @@ function mainMenu(elm){
 	clos.classList.add("innerClick");
 	clos.onclick=innerClick;
 	clos.innerHTML = "Close";
-	
+
 	return [drawPath, formation, dance, /**games, cust, map,**/ canc, clos];
 }
 
+function clearDrawLine(){
+	globalStage.getContainer().removeEventListener("mousedown", globalStage.__mousedown);
+	globalStage.getContainer().removeEventListener("mousemove", globalStage.__mousemove);
+	globalStage.getContainer().removeEventListener("mouseup", globalStage.__mouseup);
+	globalStage.setDraggable(true);
+	var line;
+	if(line = globalStage.get("#drawLine")[0]){
+		line.remove();
+	}
+	globalLayer.drawScene();
+
+}
+
+
+function actionSendDrawing(event){
+	var caller = this;
+	var line = globalStage.get("#drawLine")[0];
+	var linePoints = line.getPoints();
+	var lineTuples = [];
+	clearDrawLine();
+	for(var i=0; i<line.length; i+=2){
+		lineTuples.push((line[i], line[i+1]));
+	}
+	var robot = getRobotId(this);
+	var data = {
+		to: robot,
+		data: {
+			type: "move_request",
+			request: lineTuples
+		}
+	};
+	sendMovementReq(data, function(bool){
+		if(bool){
+			removeMenu(caller);
+		}else{
+			alert("You have been eaten by a grue.\n"+
+			"Lost connection to the server");
+		}
+	});
+
+	event.stopPropagation();
+}
+
 function drawMenu(parent){
+	var moving=false;
+	var finished=false;
+	globalStage.setDraggable(false);
+	var bg = new Kinetic.Rect({
+		x:0,
+		y:0,
+		width: globalStage.getWidth(),
+		heigh: globalStage.getHeight()
+	});
+
+	globalLayer.add(bg);
+	var robot = getRobotId(parent);
+	var line = new Kinetic.Line({
+		points:[globalStage.get("#"+robot)[0].getPosition()],
+		stroke:"red",
+		id:"drawLine"
+	});
+	globalLayer.add(line);
+	globalLayer.drawScene();
+
+	if(!globalStage.__mousedown){
+		globalStage.__mousedown = function(){
+			if(finished){
+				alert("Line already drawn.\nPlease send to robot or reset.");
+			}else{
+				var stagePos=globalStage.getAbsolutePosition();
+				var mousePos=globalStage.getMousePosition();
+				line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
+
+				moving=true;
+				globalLayer.drawScene();
+			}
+		};
+	}
+
+	if(!globalStage.__mousemove){
+		globalStage.__mousemove = function(){
+			if(moving){
+				var stagePos=globalStage.getAbsolutePosition();
+				var mousePos=globalStage.getMousePosition();
+				line.getPoints().push({x: mousePos.x-stagePos.x, y:mousePos.y-stagePos.y});
+
+				moving=true;
+				globalLayer.drawScene();
+			}
+		};
+	}
+
+	if(!globalStage.__mouseup){
+		globalStage.__mouseup = function(){
+			moving=false;
+			finished=true;
+		};
+	}
+
+	globalStage.getContainer().addEventListener("mousedown", globalStage.__mousedown);
+	globalStage.getContainer().addEventListener("mousemove", globalStage.__mousemove);
+	globalStage.getContainer().addEventListener("mouseup", globalStage.__mouseup);
+
 	//Send path button
 	var drawSend = document.createElement("div");
 	drawSend.id="drawSend";
 	drawSend.classList.add("innerClick");
-	//drawSend.onclick=innerClick;
+	drawSend.onclick=actionSendDrawing;
 	drawSend.innerHTML="Send path";
 	//Close submenu button
 	var drawCanc = document.createElement("div");
@@ -253,7 +387,7 @@ function drawMenu(parent){
 	drawCanc.classList.add("closeMenu");
 	drawCanc.onclick=innerClick;
 	drawCanc.innerHTML="Cancel";
-	
+
 	return [drawSend, drawCanc];
 }
 
@@ -262,19 +396,19 @@ function formMenu(parent){
 	var formFig8 = document.createElement("div");
 	formFig8.id="formFig8";
 	formFig8.classList.add("innerClick");
-	//formFig8.onclick=innerClick;
+	formFig8.onclick=actionClick;
 	formFig8.innerHTML="Figure of 8";
 	//Square button
 	var formSqua = document.createElement("div");
 	formSqua.id="formSqua";
 	formSqua.classList.add("innerClick");
-	//formSqua.onclick=innerClick;
+	formSqua.onclick=actionClick;
 	formSqua.innerHTML="Square";
 	//Star button
 	var formStar = document.createElement("div");
 	formStar.id="formStar";
 	formStar.classList.add("innerClick");
-	//formStar.onclick=innerClick;
+	formStar.onclick=actionClick;
 	formStar.innerHTML="Star";
 	//Close submenu button
 	var formCanc = document.createElement("div");
@@ -283,7 +417,7 @@ function formMenu(parent){
 	formCanc.classList.add("closeMenu");
 	formCanc.onclick=innerClick;
 	formCanc.innerHTML="Cancel";
-	
+
 	return [formFig8, formSqua, formStar, formCanc];
 }
 
@@ -292,13 +426,13 @@ function danceMenu(parent){
 	var danceAlo = document.createElement("div");
 	danceAlo.id="danceAlo";
 	danceAlo.classList.add("innerClick");
-	//danceAlo.onclick=innerClick;
+	danceAlo.onclick=actionClick;
 	danceAlo.innerHTML="Dance alone";
 	//Dance together
 	var danceTog = document.createElement("div");
 	danceTog.id="danceTog";
 	danceTog.classList.add("innerClick");
-	//danceTog.onclick=innerClick;
+	danceTog.onclick=actionClick;
 	danceTog.innerHTML="Dance together";
 	//Close submenu
 	var danceCanc = document.createElement("div");
@@ -307,6 +441,16 @@ function danceMenu(parent){
 	danceCanc.classList.add("closeMenu");
 	danceCanc.onclick=innerClick;
 	danceCanc.innerHTML="Cancel";
-	
+
 	return [danceAlo, danceTog, danceCanc];
+}
+
+function getRobotId(caller){
+	var robot;
+	if (caller.id==="cancel" || caller.id==="drawPath"){
+		robot = caller.parentNode.parentNode.id.substring(1);
+	} else {
+		robot = caller.parentNode.parentNode.parentNode.parentNode.id.substring(1);
+	}
+	return robot;
 }

@@ -25,10 +25,10 @@
 	window.onload = function(){
 		globalStage = new Kinetic.Stage({
 			container:document.getElementById("robot_canvas"),
-			width: 1000,
+			width: 1500,
 			height: 1000,
 			dragBoundFunc: checkBound,
-			draggable:true
+			draggable: true
 		});
 		globalLayer = new Kinetic.Layer();
 		globalStage.add(globalLayer);
@@ -37,10 +37,11 @@
 		function checkBound(pos){
 			var newY = pos.y > 0 ? 0 : pos.y;
 			var newX = pos.x > 0 ? 0 : pos.x;
-			//Add bound check for bottom and right
+			newY = newY+globalStage.getHeight() < canvasBound.offsetHeight ? canvasBound.offsetHeight-globalStage.getHeigth() : newY;
+			newX = newX+globalStage.getWidth() < canvasBound.offsetWidth ? canvasBound.offsetWidth-globalStage.getWidth(): newX;
 			return { x: newX, y:newY};
 		}
-		drawRobot('robot1', 500, 500, 120);
+		drawRobot('1', 500, 500, 120);
 	 }
 
 	 </script>

@@ -13,7 +13,7 @@ function drawRobot(id, x, y, direction) {
 		});
 		rWedge.setOffset(rWedge.getWidth() / 2.0, rWedge.getHeight() / 2.0);
 		globalLayer.add(rWedge);
-		globalStage.add(globalLayer);
+		globalLayer.drawScene();
 	}else{
 		__move(id, x, y, direction);
 	}
@@ -26,6 +26,5 @@ function __move(id, x, y, direction){
 	var newY = robo.getY() - y;
 	robo.move(newX, newY);
 	robo.setRotationDeg(direction);
-	globalLayer.add(robo);
-	globalStage.add(globalLayer);
+	globalLayer.drawScene();
 }

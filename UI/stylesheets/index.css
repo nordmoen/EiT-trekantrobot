@@ -62,7 +62,8 @@ html, body{
 	
 	.workIcon{
 		margin:			2px;
-		margin-left:		10px;
+		margin-left:		5px;
+	}
 	
 	.battIcon{
 		margin:			2px;
@@ -71,6 +72,6 @@ html, body{
 	
 	.wifiIcon{
 		margin:			2px;
-		margin-left:		10px;
+		margin-left:		5px;
 	}
 }

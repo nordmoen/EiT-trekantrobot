@@ -158,6 +158,10 @@ function sendAskInfo(data, callback){
 	__trySend(data, callback, 0, 'askInfo');
 }
 
+function sendCommand(data, callback){
+	__trySend(data, callback, 0, 'sendCommand');
+}
+
 //The callback function must be able to take a boolean true/false, the meaning of
 //this is that if true the message was sent without a problem and the function
 //can proceed and do its thing, e.g. remove sub menus because the information
@@ -171,7 +175,7 @@ function __trySend(data, callback, times, emitText){
 		if (globalSocket !== null){
 			//The socket is ready and we can transmit data
 			globalSocket.emit(emitText, data);
-			infoRequests.append(data);
+			infoRequests.push(data);
 			callback(true);
 		}else{
 			//The socket is null and we need to either try again or
