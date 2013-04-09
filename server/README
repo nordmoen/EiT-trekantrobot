@@ -1,0 +1,9 @@
+To run install Node.js (nodejs.org), once complete install Socket.io with command
+"npm install socket.io". After this run the server with "node server.js".
+
+The server accepts two optional command-line arguments, the first is the
+IP address to bind to, if this is not present defaults to 127.0.0.1. The other
+parameter which is dependant on the first is the port.
+
+"node server.js 127.0.0.1 8080" is an example with the standard IP and a different
+port.
