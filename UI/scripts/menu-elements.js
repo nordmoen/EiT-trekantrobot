@@ -81,6 +81,7 @@ function removeMenu(elm, reset){
 	}
 	if(reset){
 		resetBanner();
+		unselect();
 	}
 	clearDrawLine();
 }
@@ -219,6 +220,7 @@ function createWirelessLoc (wirelessSignal) {
 }
 
 function mainMenu(elm){
+	select(elm.id.substring(1));
 	//Draw path submenu
 	var drawPath = document.createElement("div");
 	drawPath.id="drawPath";

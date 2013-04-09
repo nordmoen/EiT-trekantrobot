@@ -28,3 +28,24 @@ function __move(id, x, y, direction){
 	robo.setRotationDeg(direction);
 	globalLayer.drawScene();
 }
+
+
+var curr_selected = null;
+
+function unselect(){
+	if(curr_selected !== null){
+		curr_selected.attrs.strokeWidth = 3;
+		curr_selected = null;
+		globalLayer.drawScene();
+	}
+}
+
+function select(id){
+	unselect();
+	var robo = globalLayer.get("#" + id);
+	if (robo.length > 0){
+		robo[0].attrs.strokeWidth = 6;
+		curr_selected = robo[0];
+		globalLayer.drawScene();
+	}
+}
