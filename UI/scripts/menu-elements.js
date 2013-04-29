@@ -39,6 +39,9 @@ function actionClick(event){
 			"Lost connection to the server"); //This error should never be displayed.
 		}
 	});
+	if(caller.id==='cancel'){
+		unselect();
+	}
 	event.stopPropagation();
 }
 

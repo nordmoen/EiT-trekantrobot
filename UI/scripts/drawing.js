@@ -29,9 +29,9 @@ function __move(id, x, y, direction){
 	globalLayer.drawScene();
 }
 
-
+//Keeps track of the currently selected robot
 var curr_selected = null;
-
+//Used for bolding and unbolding selected robot
 function unselect(){
 	if(curr_selected !== null){
 		curr_selected.attrs.strokeWidth = 3;
@@ -39,7 +39,6 @@ function unselect(){
 		globalLayer.drawScene();
 	}
 }
-
 function select(id){
 	unselect();
 	var robo = globalLayer.get("#" + id);
