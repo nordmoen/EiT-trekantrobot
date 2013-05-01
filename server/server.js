@@ -9,6 +9,52 @@ var client = null;
 var port = 8125;
 var hostAddr = '127.0.0.1';
 
+
+var dgram = require("dgram");
+var udpServer = dgram.createSocket("udp4");
+
+udpServer.on("message", function (msg, rinfo) {
+	//console.log("server got: " + msg + " from " +
+	//rinfo.address + ":" + rinfo.port);
+	try {
+		// Suddenly there are some null-caracters at the end of my string.
+		var parsed = JSON.parse(String(msg).trim().replace('\0', ''));
+		console.log(String(msg));
+		if(parsed.type == "camera" && parsed.object_type == "robot") {
+			parsed.type = "notify";
+			var theDirection = (180/Math.PI)*Math.atan2(parsed.aref.y - parsed.position.y, parsed.aref.x - parsed.position.x);
+			var message = {type: "notify", id:parsed.robot_id, pos:{x:parsed.position.x*900, y:parsed.position.y*1200}, working:false,direction:theDirection};
+
+			
+			parseAndSendToUI(message);
+		}
+	}
+	catch(error) {
+		console.log("error parsing packet: " + error);
+	}
+	
+	
+	//console.log(parsed.type);
+	console.log("Got udp packet");
+});
+
+udpServer.on("listening", function () {
+	var address = udpServer.address();
+	//udpServer.setBroadcast(true);
+	console.log("server listening " +
+	address.address + ":" + address.port);
+});
+
+udpServer.on("error", function(error) {
+	console.log(error);
+	console.log(error.stack);
+});
+
+
+udpServer.bind(1337);
+
+
+
 //These are the robots which should be discovered through XBee
 //they should be objects({}) containing a name, the wireless
 //strength, batteryStatus and their working status, i.e. are
@@ -21,8 +67,8 @@ var robots = [];
 robots.push({name:'1', wireless:40, battery:70, working:false, pos:{x:400, y:20}, direction:0});
 robots.push({name:'2', wireless:50, battery:100, working:false, pos:{x:40, y:0}, direction:0});
 robots.push({name:'3', wireless:100, battery:10, working:true, pos:{x:200, y:200}, direction:0});
-robots.push({name:'4', wireless:13, battery:0, working:false, pos:{x:100, y:300}, direction:0});
-robots.push({name:'5', wireless:0, battery:50, working:true, pos:{x:40, y:20}, direction:0});
+//robots.push({name:'4', wireless:13, battery:0, working:false, pos:{x:100, y:300}, direction:0});
+//robots.push({name:'5', wireless:0, battery:50, working:true, pos:{x:40, y:20}, direction:0});
 
 if(process.argv.length > 2){
 	hostAddr = process.argv[2];
@@ -88,6 +134,8 @@ function sendToClient(emitSignal, data){
 
 function sendNotification(data){
 	sendToClient('notify', data);
+	console.log("Emmitted notify to client");
+	console.log(data.pos.x);
 }
 
 function onClientDisconnect () {

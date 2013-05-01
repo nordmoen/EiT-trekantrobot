@@ -84,6 +84,8 @@ function notification(data){
 	//does not contain more info
 	drawRobot(data.id, data.pos.x, data.pos.y, data.direction);
 	updateRobotWorking(data.id, data.working);
+
+
 }
 
 function debug(data){
