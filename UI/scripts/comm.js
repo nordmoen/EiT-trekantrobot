@@ -16,7 +16,21 @@ $(document).ready(function(){
 	socket.on('connect', function () {
 		globalSocket = socket;
 		setBannerText("Connected to Server", 1000);
+		createSetupDiv();
 		connecting = false;
+		 $( "#slider" ).slider({
+        value:0,
+        min: 0,
+        max: 360,
+        step: 10,
+        slide: function( event, ui ) {
+                           //Its setting the slider value to the element with id "amount"
+          $( "#formationRotation" ).text( ui.value );
+			data = {"type": "command", "command":"update", "formationrotation": parseInt(ui.value)};
+			sendCommand(data, function(status){});
+        }
+    });
+	
 	});
 	socket.on('connect_failed', function () {
 		setBannerText("Could not connect to server", -1);
@@ -71,8 +85,10 @@ $(document).ready(function(){
 	//The robot connected event is special because it will be some XBee magic
 	//to have this emit from server once server sees a robot through XBee
 	socket.on('robotConnected', function (id, wire, batt, working, pos, direc){
+		
 		createRobotDiv(id, wire, batt, working);
 		drawRobot(id, pos.x, pos.y, direc);
+		
 	});
 	//To add more of these support has to be added in server.js to emit more
 	//then just add more of the socket.on methods referencing functions

@@ -4,11 +4,11 @@ function drawRobot(id, x, y, direction) {
 		var rWedge = new Kinetic.Wedge({
 			x: x,
 			y: y,
-			radius: 70,
-			angleDeg: 60,
+			radius: 0.12*640/2,
+			angleDeg: 350,
 			stroke: 'blue',
 			strokeWidth: 3,
-			rotationDeg: direction,
+			rotationDeg: direction + 10,
 			id: id,
 		});
 		rWedge.setOffset(rWedge.getWidth() / 2.0, rWedge.getHeight() / 2.0);
@@ -25,7 +25,7 @@ function __move(id, x, y, direction){
 	var newX = x - robo.getX();
 	var newY = y - robo.getY();
 	robo.move(newX, newY);
-	robo.setRotationDeg(direction);
+	robo.setRotationDeg(direction+5);
 	globalLayer.drawScene();
 }
 

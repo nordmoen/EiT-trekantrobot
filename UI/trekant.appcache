@@ -2,10 +2,11 @@ CACHE MANIFEST
 
 NETWORK:
 *
-
-CACHE:
 index.htm
 stylesheets/index.css
+CACHE:
+
+
 icons/battery-040.png
 icons/battery-060.png
 icons/battery-080.png

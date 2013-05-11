@@ -19,11 +19,11 @@ udpServer.on("message", function (msg, rinfo) {
 	try {
 		// Suddenly there are some null-caracters at the end of my string.
 		var parsed = JSON.parse(String(msg).trim().replace('\0', ''));
-		console.log(String(msg));
+		//console.log(String(msg));
 		if(parsed.type == "camera" && parsed.object_type == "robot") {
 			parsed.type = "notify";
 			var theDirection = (180/Math.PI)*Math.atan2(parsed.aref.y - parsed.position.y, parsed.aref.x - parsed.position.x);
-			var message = {type: "notify", id:parsed.robot_id, pos:{x:parsed.position.x*900, y:parsed.position.y*1200}, working:false,direction:theDirection};
+			var message = {type: "notify", id:parsed.robot_id, pos:{x:parsed.position.x*(640/2), y:parsed.position.y*640/2}, working:false,direction:theDirection};
 
 			
 			parseAndSendToUI(message);
@@ -35,12 +35,12 @@ udpServer.on("message", function (msg, rinfo) {
 	
 	
 	//console.log(parsed.type);
-	console.log("Got udp packet");
+	//console.log("Got udp packet");
 });
 
 udpServer.on("listening", function () {
 	var address = udpServer.address();
-	//udpServer.setBroadcast(true);
+	udpServer.setBroadcast(true);
 	console.log("server listening " +
 	address.address + ":" + address.port);
 });
@@ -67,7 +67,7 @@ var robots = [];
 robots.push({name:'1', wireless:40, battery:70, working:false, pos:{x:400, y:20}, direction:0});
 robots.push({name:'2', wireless:50, battery:100, working:false, pos:{x:40, y:0}, direction:0});
 robots.push({name:'3', wireless:100, battery:10, working:true, pos:{x:200, y:200}, direction:0});
-//robots.push({name:'4', wireless:13, battery:0, working:false, pos:{x:100, y:300}, direction:0});
+robots.push({name:'4', wireless:13, battery:0, working:false, pos:{x:100, y:300}, direction:0});
 //robots.push({name:'5', wireless:0, battery:50, working:true, pos:{x:40, y:20}, direction:0});
 
 if(process.argv.length > 2){
@@ -78,6 +78,7 @@ if(process.argv.length > 2){
 }
 
 var ioServer = io.listen(port + 1);
+ioServer.set('log level', 1);
 
 ioServer.on('connection', function (sock) {
 	console.log('Getting a connection on websocket');
@@ -134,8 +135,8 @@ function sendToClient(emitSignal, data){
 
 function sendNotification(data){
 	sendToClient('notify', data);
-	console.log("Emmitted notify to client");
-	console.log(data.pos.x);
+	//console.log("Emmitted notify to client");
+	//console.log(data.pos.x);
 }
 
 function onClientDisconnect () {
@@ -194,6 +195,11 @@ function onClientSendCommand(data){
 
 	//This line is only for testing/showing off purposes
 	//client.emit('robotConnected', '6', 73, 34, true);
+	
+	var message = new Buffer(JSON.stringify(data));
+	
+	udpServer.send(message, 0, message.length, 1337, "255.255.255.255");
+	console.log("Sent: " + message);
 
 }
 

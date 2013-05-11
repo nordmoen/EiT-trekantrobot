@@ -8,6 +8,7 @@ function robotClick(event){
 }
 
 function innerClick(event){
+	
 	if(this.id==="close"){
 		removeMenu(this, true);
 	}else if(this.classList.contains("closeMenu")){
@@ -48,6 +49,8 @@ function actionClick(event){
 
 
 function addMenu(elm){
+	
+
     if(elm.classList.contains("robot")){
     	$(".selected").each(function(index, element) {
     		removeMenu(element, false);
@@ -105,6 +108,138 @@ function createMenuDiv(parent){
 	if (parent.id==="waypoint"){
 		return waypointMenu(parent);
 	}
+}
+
+function sendStartCommand() {
+	
+	//document.getElementById("buttonStart").innerHTML = document.getElementById("formationSelect").value;
+	
+	activate_v_element = document.getElementById("activateV");
+	activate_v = 0;
+	if(activate_v_element.checked) {
+		activate_v = 1;
+	}
+	
+	data = {"type": "command", "command":"start", 
+			"nRobots":parseInt(document.getElementById("nRobots").value), 
+			"formation":document.getElementById("formationSelect").value, 
+			"activate_v": activate_v
+	};
+	sendCommand(data, function(status){});
+}
+
+function sendStopCommand() {
+	data = {"type": "command", "command":"stop"};
+	sendCommand(data, function(status){});
+}
+
+function sendKillCommand() {
+	data = {"type": "command", "command":"kill"};
+	sendCommand(data, function(status){});
+}
+
+function sliderToggle() {
+	$("#slider").toggle();
+	//$("#slider").html("fuck");
+	//document.getElementById("slider").innerHTML = "lallla";
+}
+
+function createSetupDiv() {
+	
+	if(document.getElementById("setup")!==null){
+		return false;
+	}	
+	var div = document.createElement("div");
+	div.id = "setup"
+	div.classList.add("clickable");
+	div.classList.add("setup");
+	div.innerHTML = "Formation";
+	
+	form= document.createElement("form");
+	form.id = "setupForm";
+	
+	// 
+	// SELECT
+	// 
+	
+	// Formation
+	select1 = document.createElement("select");
+	select1.id = "formationSelect";
+	formations = ["square", "line", "triangle", "twoline", "twomission"];
+	
+	for (i in formations) {
+		option = document.createElement("option");
+		theText=document.createTextNode(formations[i]);
+		option.appendChild(theText)
+		option.setAttribute("value", formations[i]);
+		select1.appendChild(option);
+	}
+	
+	form.appendChild(select1);
+	
+	selectNumberOfRobots = document.createElement("select");
+	selectNumberOfRobots.id = "nRobots";
+	
+	for(var i = 4;i>=1;i--) {
+		option = document.createElement("option");
+		theText=document.createTextNode(i );
+		option.appendChild(theText)
+		option.setAttribute("value", i);
+		selectNumberOfRobots.appendChild(option);
+	}
+	
+	form.appendChild(selectNumberOfRobots);
+	
+	slider = document.createElement("div");
+	//slider.setAttribute("type", "range");
+	slider.id = "slider";
+	div.appendChild(slider);
+	div.appendChild(document.createElement('br'));
+	rotationSpan = document.createElement("span");
+	rotationSpan.id = "formationRotation";
+	rotationSpan.innerHTML = '0';
+	
+	div.appendChild(rotationSpan);
+	div.appendChild(document.createElement('br'));
+	
+	activateV = document.createElement("input");
+	activateV.id = "activateV";
+	activateV.setAttribute("type", "checkbox");
+	activateV.setAttribute("value", "1");
+	
+	div.appendChild(activateV);
+	div.appendChild(document.createTextNode("Activate Mission"));
+	div.appendChild(document.createElement('br'));
+	
+	button = document.createElement("button");
+	button.id ="buttonStart";
+	button.onclick=sendStartCommand;
+	button.innerHTML = "Start";
+	div.appendChild(button);
+	
+	button = document.createElement("button");
+	button.id ="buttonStop";
+	button.onclick=sendStopCommand;
+	button.innerHTML = "Stop";
+	div.appendChild(button);
+	
+	button = document.createElement("button");
+	button.id ="buttonKill";
+	button.onclick=sendKillCommand;
+	button.innerHTML = "Kill";
+	div.appendChild(button);
+	
+	button = document.createElement("button");
+	button.id ="buttonSlider";
+	button.onclick=sliderToggle;
+	button.innerHTML = "slider";
+	div.appendChild(button);
+	
+	div.appendChild(form);
+	
+	
+	document.getElementById("menu_container").appendChild(div);
+	
 }
 
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {

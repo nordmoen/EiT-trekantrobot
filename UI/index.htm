@@ -11,6 +11,7 @@
 	<script src="scripts/imports/jquery-ui-min.js"> </script>
 	<script src="scripts/imports/socket.io.js"></script>
 	<script src="scripts/imports/kinetic.min.js"></script>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/base/jquery-ui.css" type="text/css" media="all" />
 
 	<!-- Our scripts -->
 	<script src="scripts/menu-elements.js"> </script>
@@ -25,8 +26,8 @@
 	window.onload = function(){
 		globalStage = new Kinetic.Stage({
 			container:document.getElementById("robot_canvas"),
-			width: 1500,
-			height: 1000,
+			width: 640,
+			height: 480,
 			dragBoundFunc: checkBound,
 			draggable: true
 		});
@@ -56,9 +57,11 @@
 <div id="menu_container" class="menu_container"></div>
 
 <div id="robot_area_containment" class="robot_containment">
+
 	<div id="robot_canvas">
 	</div>
 </div>
+
 </body>
 
 </html>
