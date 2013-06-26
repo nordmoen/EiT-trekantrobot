@@ -19,18 +19,23 @@ $(document).ready(function(){
 		createSetupDiv();
 		connecting = false;
 		 $( "#slider" ).slider({
-        value:0,
-        min: 0,
-        max: 360,
-        step: 10,
-        slide: function( event, ui ) {
-                           //Its setting the slider value to the element with id "amount"
-          $( "#formationRotation" ).text( ui.value );
-			data = {"type": "command", "command":"update", "formationrotation": parseInt(ui.value)};
-			sendCommand(data, function(status){});
-        }
-    });
-	
+			value:0,
+			min: 0,
+			max: 360,
+			step: 10,
+			slide: function( event, ui ) {
+							//Its setting the slider value to the element with id "amount"
+			$( "#formationRotation" ).text( ui.value );
+				data = {"type": "command", "command":"update", "fields": {"formationrotation": parseInt(ui.value)}};
+				sendCommand(data, function(status){});
+			}
+			
+			// Create host div
+       
+        
+		});
+	 //createRobotDiv("host", 100, 100, false);
+	 createHostDiv("host");
 	});
 	socket.on('connect_failed', function () {
 		setBannerText("Could not connect to server", -1);
@@ -80,6 +85,7 @@ $(document).ready(function(){
 	socket.on('notify', notification);
 	socket.on('debug', debug);
 	socket.on('info', info);
+	socket.on('information', information);
 	socket.on('exception', exception);
 	socket.on('acceptMoveRequest', moveRequestAccepted);
 	//The robot connected event is special because it will be some XBee magic
@@ -110,6 +116,30 @@ function debug(data){
 	for(var item in data.info){
 		console.log(item);
 	}
+}
+
+function information(data) {
+		// Check for ip address
+		if(data.fields.address_udp != null) {
+				console.log("got it!");
+				
+				if(data.id == 0) {
+					setIp('host', data.fields.address_udp);
+				} else {
+					setIp(data.id, data.fields.address_udp);
+				}
+		}
+		
+		// Check status
+		if(data.fields.status != null) {
+				console.log("got status on " + data.id + "!");
+				
+				if(data.id == 0) {
+					//setIp('host', data.fields.address_udp);
+				} else {
+					setStatus(data.id, data.fields.status);
+				}
+		}
 }
 
 function info(data){

@@ -13,24 +13,37 @@ var hostAddr = '127.0.0.1';
 var dgram = require("dgram");
 var udpServer = dgram.createSocket("udp4");
 
+String.prototype.fulltrim = function () {
+  return this.replace( /([^\x00-\xFF]|\s)*$/g, '' );
+};
+
 udpServer.on("message", function (msg, rinfo) {
 	//console.log("server got: " + msg + " from " +
 	//rinfo.address + ":" + rinfo.port);
 	try {
 		// Suddenly there are some null-caracters at the end of my string.
-		var parsed = JSON.parse(String(msg).trim().replace('\0', ''));
+		var parsed = JSON.parse(String(msg).fulltrim().replace(/[^A-Za-z 0-9 \.,\?""!@#\$%\^&\*\(\)-_=\+;:<>\/\\\|\}\{\[\]`~]*/g, '').replace('\0', ''));
 		//console.log(String(msg));
-		if(parsed.type == "camera" && parsed.object_type == "robot") {
+		if(parsed.type == "robot") {
 			parsed.type = "notify";
 			var theDirection = (180/Math.PI)*Math.atan2(parsed.aref.y - parsed.position.y, parsed.aref.x - parsed.position.x);
 			var message = {type: "notify", id:parsed.robot_id, pos:{x:parsed.position.x*(640/2), y:parsed.position.y*640/2}, working:false,direction:theDirection};
 
-			
+			//console.log(String(msg));
 			parseAndSendToUI(message);
+		}
+		else if(parsed.type == "command") {
+				console.log("Got: " + String(msg));
+		}
+		else if(parsed.type == "information") {
+				var message = {type: "information", id:parsed.id, fields: parsed.fields};
+				
+				parseAndSendToUI(message);
 		}
 	}
 	catch(error) {
 		console.log("error parsing packet: " + error);
+		console.log(String(msg));
 	}
 	
 	
@@ -111,6 +124,8 @@ function parseAndSendToUI(data){
 		case 'notify':
 			sendNotification(data);
 			break;
+		case 'information':
+			sendInformation(data);
 		case 'debug_return':
 			break;
 		case 'info_return':
@@ -131,6 +146,10 @@ function sendToClient(emitSignal, data){
 	}else{
 		return false;
 	}
+}
+
+function sendInformation(data) {
+		sendToClient('information', data);
 }
 
 function sendNotification(data){

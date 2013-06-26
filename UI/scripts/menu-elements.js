@@ -5,6 +5,11 @@ function robotClick(event){
 	} else {
 		addMenu(this);
 	}
+	
+	requestIp(0);
+	setIp('host', 'pending..');
+	
+	
 }
 
 function innerClick(event){
@@ -121,9 +126,10 @@ function sendStartCommand() {
 	}
 	
 	data = {"type": "command", "command":"start", 
+			"fields":{
 			"nRobots":parseInt(document.getElementById("nRobots").value), 
 			"formation":document.getElementById("formationSelect").value, 
-			"activate_v": activate_v
+			"activate_v": activate_v}
 	};
 	sendCommand(data, function(status){});
 }
@@ -142,6 +148,20 @@ function sliderToggle() {
 	$("#slider").toggle();
 	//$("#slider").html("fuck");
 	//document.getElementById("slider").innerHTML = "lallla";
+}
+
+function sendUpdateRequest() {
+	requestIp(0);
+	setIp('host', 'pending..');
+	
+	for( var i = 1; i <= 4; i++) {
+			requestIp(i);
+			setIp(i, 'Ip: pending..');
+			
+			requestStatus(i);
+			setStatus(i, 'Pending..');
+	}
+	
 }
 
 function createSetupDiv() {
@@ -237,9 +257,56 @@ function createSetupDiv() {
 	
 	div.appendChild(form);
 	
+	button = document.createElement("button");
+	button.id ="update";
+	button.onclick=sendUpdateRequest;
+	button.innerHTML = "Status";
+	div.appendChild(button);
+	
 	
 	document.getElementById("menu_container").appendChild(div);
 	
+}
+
+function hostClick(event){
+	// Send command to get current ip!
+	requestIp(0);
+	setIp('host', 'pending..');
+	
+}
+
+function requestIp(id){
+	data = {'type': 'information_request', 'fields': { 'address_udp': 0}, 'id':id};
+	sendCommand(data, function(status){});
+}
+
+function requestStatus(id) {
+	data = {'type': 'information_request', 'fields': { 'status': 0}, 'id':id};
+	sendCommand(data, function(status){});
+}
+
+function createHostDiv(name) {
+	if(document.getElementById("r"+name)!==null){
+		return false;
+	}
+	var rDiv = document.createElement("div");
+	//rDiv.classList.add("robot");
+	rDiv.classList.add("clickable");
+	rDiv.id = "r" + name;
+	rDiv.title = "Robot " + name;
+	rDiv.innerHTML=rDiv.title + "<br />";
+	rDiv.onclick=hostClick
+
+	var ip = document.createElement("span");
+	ip.id = "r"+name+"ip";
+	ip.innerHTML = "Ip: none";
+	
+	rDiv.appendChild(ip);
+	
+
+	document.getElementById("menu_container").appendChild(rDiv);
+
+	return true;
 }
 
 function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
@@ -278,6 +345,18 @@ function createRobotDiv (number, wirelessSignal, batteryStatus, working) {
 	work.classList.add("workIcon");
 	work.id="r"+number+"work";
 	rDiv.appendChild(work);
+	
+	var ip = document.createElement("span");
+	ip.id = "r"+number+"ip";
+	ip.innerHTML = "Ip: none";
+	rDiv.appendChild(ip);
+	
+	var status = document.createElement("span");
+	status.id = "r"+number+"status";
+	status.innerHTML = "Status: Unknown";
+	rDiv.appendChild(status);
+	
+
 
 	document.getElementById("menu_container").appendChild(rDiv);
 
@@ -313,6 +392,31 @@ function updateRobotWorking(robot, working){
 	}
 	return false;
 }
+
+function setIp(robot, address) {
+	var span = document.getElementById("r"+robot+"ip");
+	if( span == null) {
+		console.log("Span was null: r"+robot+"ip");
+	}
+	else {
+		span.innerHTML = address ;
+	}
+	
+	return true;
+}
+
+function setStatus(robot, status) {
+	var span = document.getElementById("r"+robot+"status");
+	if( span == null) {
+		console.log("Span was null: r"+robot+"status");
+	}
+	else {
+		span.innerHTML = "Status: "+status
+	}
+	
+	return true;
+}
+
 
 
 function createWorkingLoc (working) {
